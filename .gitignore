@@ -1,0 +1,6 @@
+
+# Verilog simulation binaries
+sim/
+
+# VS Code Build Configurations and Related Files
+.vscode/
