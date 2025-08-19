@@ -1,4 +1,4 @@
-`timescale  1ns /1ns
+`timescale  1ns /1ps
 module add32_tb;
     reg [31:0] a;
     reg [31:0] b;
@@ -7,17 +7,18 @@ module add32_tb;
     wire c31;
     add32 uut(.a(a),.b(b),.c_1(c_1),.s(sum),.c31(c31));
     initial begin
-        $monitor("Time = %t, Sum = 0x%h, Carry= %d\n",$time,sum,c31);
+        $timeformat(-9,2," ns",6);
+        $monitor("Time = %t, Sum = %d, Carry= %d\n",$realtime,sum,c31);
         c_1 = 0;
-        a = 32'h00000000;
-        b = 32'h00000000;
-        #10
-        a = 32'h00000001;
-        b = 32'h00000004;
-        #10
-        a = 32'h00000001;
-        b = 32'hFFFFFFFF;
-        #10
+        a <= 1;
+        b <= 5;
+        #10.000
+        a <= 24;
+        b <= 79;
+        #10.000
+        a <= 84762388;
+        b <= 983453876;
+        #10.000
         $display("End of Simulation\n");
         $finish;
     end

@@ -1,4 +1,5 @@
-
 # Verilog simulation binaries
 sim/
 
+# VS code configurations
+.vscode/
