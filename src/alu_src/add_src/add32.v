@@ -1,6 +1,6 @@
 // Author: Ninaad Desai
 // Description: Group Carry Adder with four 8-bit CLAs
-module add32(
+module add32( // Average propagartion delay: 0.6 ns
     input[31:0] a,
     input[31:0] b,
     input c_1,
