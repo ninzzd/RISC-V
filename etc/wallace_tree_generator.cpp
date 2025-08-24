@@ -1,80 +1,100 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
+void outputStage(std::vector<int> b, std::vector<int> ha, std::vector<int> fa, int n, int stage){
+    int width = (int)log10(2*n-1) + 1;
+    cout << "Stage: " << stage << endl;
+    cout << "Weights:      |";
+    for(int i = 2*n-1;i >= 0;i--){
+        cout << right << setw(width) << i << "|";
+    }
+    cout << endl;
+    cout << "Bits(Count):  |";
+    for(int i = 2*n-1;i >= 0;i--){
+        cout << right << setw(width) << b[i] << "|";
+    }
+    cout << endl;
+    cout << "Bits: " << endl; 
+    for(int i = 1;i <= n;i++){
+        cout << "              |";
+        for(int j = 2*n-1;j >= 0;j--){
+            cout << right << setw(width) << (b[j]>=i?"X":"") << "|";
+        }
+        cout << endl;
+    }
+
+    cout << endl;
+    cout << "Half-Adders:  |";
+    for(int i = 2*n-1;i >= 0;i--){
+        cout << right << setw(width) << ha[i] << "|";
+    }
+    cout << endl;
+    cout << "Full-Adders:  |";
+    for(int i = 2*n-1;i >= 0;i--){
+        cout << right << setw(width) << fa[i] << "|";
+    }
+    cout << endl;
+}
 int main(){
     int n;
     cout << "Enter the bit size of multiplier and multiplicand: ";
     cin >> n;
-    int stage = 1;
-    std::vector<int> bits_per_column;
-    std::vector<int> ha_count;
-    std::vector<int> fa_count;
-    for(int i = 0;i < 2*n-1;i++){
-        bits_per_column.push_back(min(i+1,2*n-i-1));
-        ha_count.push_back(0);
-        fa_count.push_back(0);
-        cout << i << " ";
+    int width = (int)log10(2*n-1) + 1;
+    std::vector<int> b;
+    std::vector<int> ha;
+    std::vector<int> fa;
+    int flag,stage;
+    stage = 0;
+    for(int i = 0;i < 2*n;i++){
+        if(i == 0)  b.push_back(0);
+        else b.push_back(min(i,2*n-i));
+        ha.push_back(0);
+        fa.push_back(0);
     }
-    int flag;
-    cout << endl;
+    reverse(b.begin(),b.end());
     do{
-        cout << "--------------------" << endl;
-        cout << "Stage: " << stage << endl;
-        cout << "Initial bit count: " << endl;
-        for(int i = 0;i < 2*n-1;i++){
-            cout << bits_per_column[i] << " ";
-        }
+        stage++;
         flag = 0;
-        for(int i = 0;i < 2*n-1;i++){
-            int fa,ha;
-            if(!flag){
-                if(bits_per_column[i] >= 3){
-                    flag = 1;
-                    fa = (bits_per_column[i] - 1)/3;
-                    ha = (bits_per_column[i] - 3*fa - 1)/2;
+        for(int i = 0;i < 2*n;i++){
+            if(flag == 0 && b[i] == 3){
+                flag = 1;
+                ha[i] = 1;
+                fa[i] = 0;
+            }
+            else if(flag){
+                if(b[i] == 2 && i < 2*n-1){
+                    if(b[i+1] == 1)ha[i] = 0;
+                    else ha[i] = 1;
                 }
-                else{
-                    fa = ha = 0;
-                }
+                else ha[i] = (b[i]%3)/2;
+                fa[i] = b[i]/3;
             }
             else{
-                fa = bits_per_column[i]/3;
-                ha = (bits_per_column[i] - 3*fa)/2;
-                if(stage == 1 && i == 2*n-3)
-                    ha = 0;
-            }
-            fa_count[i] = fa;
-            ha_count[i] = ha;
-        }
-        cout << "\nNo. of half adders:" << endl; 
-        for(int i = 0;i < 2*n-1;i++){
-            cout << "(" << i  << ")" << "->" << ha_count[i] << " ";
-        }
-        cout << "\nNo. of full adders:" << endl; 
-        for(int i = 0;i < 2*n-1;i++){
-            cout << "(" << i  << ")" << "->" << fa_count[i] << " ";
-        }
-        for(int i = 0;i < 2*n-1;i++){
-            bits_per_column[i] -= (2*fa_count[i] + ha_count[i]);
-            if(i == 2*n-2 && (fa_count[i] + ha_count[i]) != 0)
-                bits_per_column.push_back(fa_count[i] + ha_count[i]);
-            else
-                bits_per_column[i+1] +=  (fa_count[i] + ha_count[i]);
-        }
-        cout << "\nBit count after compression:" << endl; 
-        for(int i = 0;i < (int)bits_per_column.size();i++){
-            cout << bits_per_column[i] << " ";
-        }
-        stage++;
-        cout << "\n--------------------" << endl;
-        flag = 0;
-        for(int i = 0;i < (int)bits_per_column.size();i++){
-            if(bits_per_column[i] > 2){
-                flag = 1;
-                break;
+                ha[i] = 0;
+                fa[i] = 0;
             }
         }
-    }while(flag == 1 && stage<=10);
+        outputStage(b,ha,fa,n,stage);
+        for(int i = 0;i < 2*n-1;i++){
+            b[i] -= (2*fa[i] + ha[i]);
+            b[i+1] += ha[i] + fa[i];
+        }
+        flag = 1;
+        for(int i = 0;i < 2*n-1;i++){
+            if(b[i] > 2) flag = 0;
+        }
+
+    }while(flag == 0 && stage < 20);
+    cout << "Final Bit Arrangement before addition: " << endl;
+    for(int i = 1;i <= n;i++){
+        cout << "              |";
+        for(int j = 2*n-1;j >= 0;j--){
+            cout << right << setw(width) << (b[j]>=i?"X":"") << "|";
+        }
+        cout << endl;
+    }
     return 0;
 }
