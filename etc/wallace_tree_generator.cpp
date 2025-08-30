@@ -69,7 +69,8 @@ int main(){
                     if(b[i+1] == 1)ha[i] = 0;
                     else ha[i] = 1;
                 }
-                else ha[i] = (b[i]%3)/2;
+                else 
+                    ha[i] = (b[i]%3)/2;
                 fa[i] = b[i]/3;
             }
             else{
