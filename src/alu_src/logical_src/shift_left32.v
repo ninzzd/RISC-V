@@ -1,7 +1,6 @@
 module shift_left32(
     input [31:0] inp,
     input [4:0] shamt,
-    input mode,
     output [31:0] res
 );
     wire [31:0] in0;
