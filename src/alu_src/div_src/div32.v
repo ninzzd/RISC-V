@@ -13,7 +13,6 @@ module div32 (
 );
     reg [34:0] remainder_ext; //to allow us to store 35 bit remainder while computing
     reg [31:0] divisor_abs, dividend_abs;
-    reg signed [31:0] dividend_s, divisor_s;
     reg [3:0] count;//=11;
     reg busy;
     reg sign_quotient, sign_remainder;
@@ -39,9 +38,6 @@ module div32 (
 
             // Signed or unsigned absolute values
             if (is_signed) begin
-                dividend_s <= $signed(dividend_in);
-                divisor_s <= $signed(divisor_in);
-
                 sign_quotient <= dividend_in[31] ^ divisor_in[31];
                 sign_remainder <= dividend_in[31];
 
@@ -54,7 +50,6 @@ module div32 (
                 sign_quotient <= 0;
                 sign_remainder <= 0;
             end
-
             remainder_ext <= {3'b0, dividend_abs};  // Extend dividend by 3 bits
             quotient <= 0;
             $display("----- New Division Start -----");
@@ -74,16 +69,15 @@ module div32 (
             end else begin
                 // Quotient digit selection (unsigned trial)
                 if (remainder_shifted >= divisor_abs * 7) q_digit = 3'd7;
-                else if (remainder_shifted >= divisor_abs * 6) q_digit = 3'd6;
-                else if (remainder_shifted >= divisor_abs * 5) q_digit = 3'd5;
-                else if (remainder_shifted >= divisor_abs * 4) q_digit = 3'd4;
-                else if (remainder_shifted >= divisor_abs * 3) q_digit = 3'd3;
-                else if (remainder_shifted >= divisor_abs * 2) q_digit = 3'd2;
+                else if (remainder_shifted >= (divisor_abs<<1+divisor_abs<<2)) q_digit = 3'd6;
+                else if (remainder_shifted >= (divisor_abs<<2+divisor_abs)) q_digit = 3'd5;
+                else if (remainder_shifted >= (divisor_abs<<2)) q_digit = 3'd4;
+                else if (remainder_shifted >= (divisor_abs<<1+divisor_abs)) q_digit = 3'd3;
+                else if (remainder_shifted >= (divisor_abs<<1)) q_digit = 3'd2;
                 else if (remainder_shifted >= divisor_abs) q_digit = 3'd1;
                 else q_digit = 3'd0;
                 
-                remainder_ext <= remainder_shifted - q_digit * divisor_abs;
-
+                remainder_ext <= (remainder_ext<<3) - q_digit * divisor_abs;
                 quotient <= (quotient << 3) | q_digit;
                 count <= count - 1;
                 $display("Cycle %0d: q_digit=%0d, quotient=%0d, remainder_ext=%0d",
@@ -97,9 +91,9 @@ module div32 (
                 // sign correction
                 if (is_signed && sign_quotient) begin
                     quotient <= ~quotient + 1;
+                    remainder <= (is_signed && sign_remainder)? ~remainder_ext[34:3] + 1: remainder_ext[34:3];
+                end else begin
                     remainder <= remainder_ext[34:3];
-                    if (is_signed && sign_remainder)
-                        remainder <= ~remainder + 1;
                 end
                 done <=1;
                 busy <=0;
