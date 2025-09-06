@@ -1,19 +1,32 @@
-module mul32(
-    input [31:0] a,
-    input [31:0] b,
-    output [31:0] hi,
-    output [31:0] lo
+module mul32 #(parameter N = 32)(
+    input [N-1:0] a,
+    input [N-1:0] b,
+    output [N-1:0] hi,
+    output [N-1:0] lo
 );
-    wire s0[0:63][0:31];
-    genvar i;
+    wire [N-1:0] s0 [2*N-2:0];
+    wire [N-1:0] s1 [2*N-2:0];
+    wire [N-1:0] s2 [2*N-2:0];
+    wire [N-1:0] s3 [2*N-2:0];
+    wire [N-1:0] s4 [2*N-2:0];
+    wire [N-1:0] s5 [2*N-2:0];
+    wire [N-1:0] s6 [2*N-2:0];
+    wire [N-1:0] s7 [2*N-2:0];
+    genvar w;
     genvar j;
+    genvar k;
     generate
-        for(i = 0;i <= 62;i = i+1)
+        for(w = 0;w <= 2*N-2;w = w+1)
         begin
-            for(j = 0;j <= i;j = j+1)
+            if(w < N)
             begin
-                if(i-j <= 31)
-                    assign s0[i][j] = a[j]&b[i-j];  
+                for(j = 0;j <= w;j = j+1)
+                    assign s0[w][j] = a[w-j]&b[j];
+            end
+            else
+            begin
+                for(j = 0;j <= 2*N - 1 - w;j = j+1)
+                    assign s0[w][j] = a[N-1-j]&b[w+j+1-N];
             end
         end
     endgenerate

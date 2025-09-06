@@ -10,10 +10,10 @@ module regfile_int(
     input [31:0] wr_data,
 
     input [4:0] rs1_addr, // 2 read lines
-    output [31:0] rs1_data,
+    output reg [31:0] rs1_data,
 
     input [4:0] rs2_addr,
-    output [31:0] rs2_data
+    output reg [31:0] rs2_data
 );
     reg [31:0] x[0:31];
     always @(*)

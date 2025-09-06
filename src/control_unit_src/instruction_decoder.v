@@ -6,8 +6,7 @@ module instruction_decoder(
     input clk,
     input [31:0] instr_data,
     input instr_en,
-    output [3:0] alu_ctrl,
-    output []
+    output [3:0] alu_ctrl
 );
     reg [31:0] instr;
 
