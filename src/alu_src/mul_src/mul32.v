@@ -16,6 +16,7 @@ module mul32 #(parameter N = 32)(
     genvar j;
     genvar k;
     generate
+        // Stage 0: Partial-products generation
         for(w = 0;w <= 2*N-2;w = w+1)
         begin
             if(w < N)
@@ -29,5 +30,41 @@ module mul32 #(parameter N = 32)(
                     assign s0[w][j] = a[N-1-j]&b[w+j+1-N];
             end
         end
+        // Stage 1
+        for(w = 0;w <= 2*N-2;w = w+1){
+            case(i)
+                28:
+                begin
+                    
+                end
+                29:
+                begin
+                    
+                end
+                30:
+                begin
+                    
+                end
+                31,32:
+                begin
+                    
+                end
+                33:
+                begin
+                    
+                end
+                34:
+                begin
+                    
+                end
+                35:
+                begin
+                    
+                end
+                default:
+                    s1[w] = s0[w];
+
+            endcase 
+        }
     endgenerate
 endmodule
