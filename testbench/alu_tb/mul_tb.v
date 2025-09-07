@@ -14,7 +14,12 @@ module mul_tb();
         $timeformat(-9,2," ns",6);
         $monitor("Time = %t, a = %b, b = %b, res = %b",$realtime,a,b,res);
         #10.000
-        a <= 6;
-        b <= 7;
+        a <= 2;
+        b <= 3;
+        #10.000
+        a <= 5;
+        b <= 6;
+        #10.000
+        $finish;
     end
 endmodule
