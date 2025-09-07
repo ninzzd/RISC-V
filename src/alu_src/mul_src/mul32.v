@@ -4,6 +4,7 @@ module mul32 #(parameter N = 32)(
     output [N-1:0] hi,
     output [N-1:0] lo
 );
+    // Error is in bits: 48, 47, 46, 45
     wire [N-1:0] s0 [2*N-2:0];
     wire [N-1:0] s1 [2*N-2:0];
     wire [N-1:0] s2 [2*N-2:0];
@@ -24,11 +25,15 @@ module mul32 #(parameter N = 32)(
             begin
                 for(j = 0;j <= w;j = j+1)
                     assign s0[w][j] = a[w-j]&b[j];
+                for(k = w+1;k < N;k = k+1)
+                    assign s0[w][k] = 1'b0;
             end
             else
             begin
                 for(j = 0;j <= 2*N - 1 - w;j = j+1)
                     assign s0[w][j] = a[N-1-j]&b[w+j+1-N];
+                for(k = 2*N-w;k < N;k = k+1)
+                    assign s0[w][k] = 1'b0;
             end
         end
         // Stage 1
@@ -290,7 +295,7 @@ module mul32 #(parameter N = 32)(
                     assign s2[w] = s1[w];
             endcase 
         end
-        // Stage 3
+        // Stage 3 (Error could be here)
         // Max depth: 13 (12:0)
         for(w = 0;w <= 2*N-2;w = w+1)
         begin
