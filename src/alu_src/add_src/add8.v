@@ -1,7 +1,7 @@
 `timescale 1 ns/ 1 ps
 // Author: Ninaad Desai
 // Descriptions: 8-bit CLA Adder
-module add8 #(parameter T=0.000)( 
+module add8 #(parameter T = 0.000)( 
     input[7:0] a,
     input[7:0] b,
     input c_1,
