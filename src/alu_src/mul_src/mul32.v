@@ -25,15 +25,15 @@ module mul32 #(parameter N = 32)(
             begin
                 for(j = 0;j <= w;j = j+1)
                     assign s0[w][j] = a[w-j]&b[j];
-                for(k = w+1;k < N;k = k+1)
-                    assign s0[w][k] = 1'b0;
+                // for(k = w+1;k < N;k = k+1)
+                //     assign s0[w][k] = 1'b0;
             end
             else
             begin
-                for(j = 0;j <= 2*N - 1 - w;j = j+1)
+                for(j = 0;j < 2*N - 1 - w;j = j+1)
                     assign s0[w][j] = a[N-1-j]&b[w+j+1-N];
-                for(k = 2*N-w;k < N;k = k+1)
-                    assign s0[w][k] = 1'b0;
+                // for(k = 2*N-w;k < N;k = k+1)
+                //     assign s0[w][k] = 1'b0;
             end
         end
         // Stage 1
