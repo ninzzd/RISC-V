@@ -1,5 +1,5 @@
 `timescale 1 ns / 1 ps
-module fa #(parameter T = 0.300)(
+module fa #(parameter T = 0.000)(
     input [2:0] i,
     output [1:0] o
 );
