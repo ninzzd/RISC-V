@@ -1,4 +1,4 @@
-module shift_left32(
+module shift_left32 #(parameter T = 0.000)(
     input [31:0] inp,
     input [4:0] shamt,
     output [31:0] res
@@ -69,36 +69,36 @@ module shift_left32(
     assign in30 = {1'b0,{inp[0],inp[1],inp[2],inp[3],inp[4],inp[5],inp[6],inp[7],inp[8],inp[9],inp[10],inp[11],inp[12],inp[13],inp[14],inp[15],inp[16],inp[17],inp[18],inp[19],inp[20],inp[21],inp[22],inp[23],inp[24],inp[25],inp[26],inp[27],inp[28],inp[29],inp[30]}};
     assign in31 = {inp[0],inp[1],inp[2],inp[3],inp[4],inp[5],inp[6],inp[7],inp[8],inp[9],inp[10],inp[11],inp[12],inp[13],inp[14],inp[15],inp[16],inp[17],inp[18],inp[19],inp[20],inp[21],inp[22],inp[23],inp[24],inp[25],inp[26],inp[27],inp[28],inp[29],inp[30],inp[31]};
     
-    mux32t1 m0(.in(in0),.sel(shamt),.out(res[0]));
-    mux32t1 m1(.in(in1),.sel(shamt),.out(res[1]));
-    mux32t1 m2(.in(in2),.sel(shamt),.out(res[2]));
-    mux32t1 m3(.in(in3),.sel(shamt),.out(res[3]));
-    mux32t1 m4(.in(in4),.sel(shamt),.out(res[4]));
-    mux32t1 m5(.in(in5),.sel(shamt),.out(res[5]));
-    mux32t1 m6(.in(in6),.sel(shamt),.out(res[6]));
-    mux32t1 m7(.in(in7),.sel(shamt),.out(res[7]));
-    mux32t1 m8(.in(in8),.sel(shamt),.out(res[8]));
-    mux32t1 m9(.in(in9),.sel(shamt),.out(res[9]));
-    mux32t1 m10(.in(in10),.sel(shamt),.out(res[10]));
-    mux32t1 m11(.in(in11),.sel(shamt),.out(res[11]));
-    mux32t1 m12(.in(in12),.sel(shamt),.out(res[12]));
-    mux32t1 m13(.in(in13),.sel(shamt),.out(res[13]));
-    mux32t1 m14(.in(in14),.sel(shamt),.out(res[14]));
-    mux32t1 m15(.in(in15),.sel(shamt),.out(res[15]));
-    mux32t1 m16(.in(in16),.sel(shamt),.out(res[16]));
-    mux32t1 m17(.in(in17),.sel(shamt),.out(res[17]));
-    mux32t1 m18(.in(in18),.sel(shamt),.out(res[18]));
-    mux32t1 m19(.in(in19),.sel(shamt),.out(res[19]));
-    mux32t1 m20(.in(in20),.sel(shamt),.out(res[20]));
-    mux32t1 m21(.in(in21),.sel(shamt),.out(res[21]));
-    mux32t1 m22(.in(in22),.sel(shamt),.out(res[22]));
-    mux32t1 m23(.in(in23),.sel(shamt),.out(res[23]));
-    mux32t1 m24(.in(in24),.sel(shamt),.out(res[24]));
-    mux32t1 m25(.in(in25),.sel(shamt),.out(res[25]));
-    mux32t1 m26(.in(in26),.sel(shamt),.out(res[26]));
-    mux32t1 m27(.in(in27),.sel(shamt),.out(res[27]));
-    mux32t1 m28(.in(in28),.sel(shamt),.out(res[28]));
-    mux32t1 m29(.in(in29),.sel(shamt),.out(res[29]));
-    mux32t1 m30(.in(in30),.sel(shamt),.out(res[30]));
-    mux32t1 m31(.in(in31),.sel(shamt),.out(res[31]));
+    mux32t1 #(.T(T)) m0(.in(in0),.sel(shamt),.out(res[0]));
+    mux32t1 #(.T(T)) m1(.in(in1),.sel(shamt),.out(res[1]));
+    mux32t1 #(.T(T)) m2(.in(in2),.sel(shamt),.out(res[2]));
+    mux32t1 #(.T(T)) m3(.in(in3),.sel(shamt),.out(res[3]));
+    mux32t1 #(.T(T)) m4(.in(in4),.sel(shamt),.out(res[4]));
+    mux32t1 #(.T(T)) m5(.in(in5),.sel(shamt),.out(res[5]));
+    mux32t1 #(.T(T)) m6(.in(in6),.sel(shamt),.out(res[6]));
+    mux32t1 #(.T(T)) m7(.in(in7),.sel(shamt),.out(res[7]));
+    mux32t1 #(.T(T)) m8(.in(in8),.sel(shamt),.out(res[8]));
+    mux32t1 #(.T(T)) m9(.in(in9),.sel(shamt),.out(res[9]));
+    mux32t1 #(.T(T)) m10(.in(in10),.sel(shamt),.out(res[10]));
+    mux32t1 #(.T(T)) m11(.in(in11),.sel(shamt),.out(res[11]));
+    mux32t1 #(.T(T)) m12(.in(in12),.sel(shamt),.out(res[12]));
+    mux32t1 #(.T(T)) m13(.in(in13),.sel(shamt),.out(res[13]));
+    mux32t1 #(.T(T)) m14(.in(in14),.sel(shamt),.out(res[14]));
+    mux32t1 #(.T(T)) m15(.in(in15),.sel(shamt),.out(res[15]));
+    mux32t1 #(.T(T)) m16(.in(in16),.sel(shamt),.out(res[16]));
+    mux32t1 #(.T(T)) m17(.in(in17),.sel(shamt),.out(res[17]));
+    mux32t1 #(.T(T)) m18(.in(in18),.sel(shamt),.out(res[18]));
+    mux32t1 #(.T(T)) m19(.in(in19),.sel(shamt),.out(res[19]));
+    mux32t1 #(.T(T)) m20(.in(in20),.sel(shamt),.out(res[20]));
+    mux32t1 #(.T(T)) m21(.in(in21),.sel(shamt),.out(res[21]));
+    mux32t1 #(.T(T)) m22(.in(in22),.sel(shamt),.out(res[22]));
+    mux32t1 #(.T(T)) m23(.in(in23),.sel(shamt),.out(res[23]));
+    mux32t1 #(.T(T)) m24(.in(in24),.sel(shamt),.out(res[24]));
+    mux32t1 #(.T(T)) m25(.in(in25),.sel(shamt),.out(res[25]));
+    mux32t1 #(.T(T)) m26(.in(in26),.sel(shamt),.out(res[26]));
+    mux32t1 #(.T(T)) m27(.in(in27),.sel(shamt),.out(res[27]));
+    mux32t1 #(.T(T)) m28(.in(in28),.sel(shamt),.out(res[28]));
+    mux32t1 #(.T(T)) m29(.in(in29),.sel(shamt),.out(res[29]));
+    mux32t1 #(.T(T)) m30(.in(in30),.sel(shamt),.out(res[30]));
+    mux32t1 #(.T(T)) m31(.in(in31),.sel(shamt),.out(res[31]));
 endmodule
