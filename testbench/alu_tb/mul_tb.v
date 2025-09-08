@@ -18,8 +18,8 @@ module mul_tb();
         $timeformat(-9,2," ns",6);
         $monitor("Time = %t, a = %b, b = %b, res = %b",$realtime,a,b,res);
         #10.000
-        a <= 1;
-        b <= 1;
+        a <= 2;
+        b <= 3;
         #1.000
         // Error in partial product generation (stage 0)
         // For weight w = 32,33, 'X' is appearing near the base of the column
@@ -33,7 +33,7 @@ module mul_tb();
         begin
             for(w = 62;w >= 0;w = w-1)
             begin
-                $write("%2b ",uut.s0[w][i]);
+                $write("%2b ",uut.s1[w][i]);
             end
             $write("\n");
         end
