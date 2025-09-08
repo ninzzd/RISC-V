@@ -1,9 +1,9 @@
-module mux32t1(
+module mux32t1 #(parameter T = 0.000)(
     input [31:0] in,
     input [4:0] sel,
     output out
 );
-    assign out =        (~sel[4] & ~sel[3] & ~sel[2] & ~sel[1] & ~sel[0])&in[0]
+    assign #(2*T) out = (~sel[4] & ~sel[3] & ~sel[2] & ~sel[1] & ~sel[0])&in[0]
                     |   (~sel[4] & ~sel[3] & ~sel[2] & ~sel[1] &  sel[0])&in[1]
                     |   (~sel[4] & ~sel[3] & ~sel[2] &  sel[1] & ~sel[0])&in[2]
                     |   (~sel[4] & ~sel[3] & ~sel[2] &  sel[1] &  sel[0])&in[3]
