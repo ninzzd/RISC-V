@@ -1,14 +1,16 @@
 `timescale 1ns/1ps
 module mul_tb();
+    reg mode;
     reg signed [31:0] a;
     reg signed [31:0] b;
+    wire eq_u;
+    wire eq;
     wire [31:0] a_;
     wire [31:0] b_;
     wire signed [63:0] res_signed;
     wire [63:0] res_unsigned;
     wire signed [63:0] exp_res_signed;
     wire [63:0] exp_res_unsigned;
-    reg mode;
 
     mul32 #(.T(0.150)) uut(
         .a(a),
@@ -22,23 +24,37 @@ module mul_tb();
     assign exp_res_signed = a*b;
     assign exp_res_unsigned = a_*b_;
     assign res_unsigned = res_signed;
+    assign eq = (exp_res_signed == res_signed) ? 1'b1 : 1'b0;
+    assign eq_u = (exp_res_unsigned == res_unsigned) ? 1'b1 : 1'b0;
     // task display;
     // endtask
     integer w;
     integer i;
+    integer log;
+    initial
+    begin
+        log = $fopen("log/mul_tb_log.csv","w");
+        #1.000
+        forever
+        begin
+            #0.500
+            $fwrite(log,"%0t,%0b,%0d,%0d,%0d,%0d,%0b,%0d,%0d,%0d,%0d,%0b\n",$realtime,mode,a_,b_,exp_res_unsigned,res_unsigned,eq_u,a,b,exp_res_signed,res_signed,eq);
+        end
+    end
     initial
     begin
         $timeformat(-9,2," ns",6);
-        $monitor("Time = %t, a = %d, b = %d, mode = %b, exp_res_unsigned = %d, exp_res_signed = %d, res_unsigned = %d, reg_signed",$realtime,a,b,mode,exp_res_unsigned,exp_res_signed,res_unsigned,res_signed);
-        #10.000
+        #0.500
+        $fwrite(log,"Time,Mode,a_u,b_u,exp_res_u,res_u,eq_u,a,b,exp_res,res,eq\n");
+        #0.499
         mode <= 0;
         a <= 292;
         b <= 6785;
-        #10.000
+        #5.000
         mode <= 0;
         a <= 32'h8FA4B672;
         b <= 32'h6C3F8132;
-        #10.000
+        #5.000
         mode <= 1;
         // ----- Stage-wise debugging -----
         // $write("\n");
@@ -66,7 +82,9 @@ module mul_tb();
         //     $write("\n");
         // end
         // --------------------------------
-        #10.000
+        #5.000
+        $fclose(log);
         $finish;
     end
+
 endmodule
