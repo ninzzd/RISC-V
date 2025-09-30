@@ -1,6 +1,6 @@
  /*
     Author: Ninaad Desai
-    Description: Simple, behavioral implementation of the register file (inferred BRAM)
+    Description: Simple, behavioral implementation of the register file (inferred BRAM). Two read lines, one write line
  */
 module regfile_int(
     input clk,
