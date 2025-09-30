@@ -4,32 +4,36 @@
  */
 module regfile_int(
     input clk,
-    input wr_en,
-    input rd_en,
-    input [4:0] wr_addr, // 1 write line
-    input [31:0] wr_data,
+    input [31:0] ra1,       // Read-address 1
+    input [31:0] ra2,       // Read-address 2
+    input [31:0] wa1,       // Write-address 1
+    input [31:0] dw1,       // Data-write 1
+    input we,               // Write-enable
+    input [31:0] pcnext,    // Program-counter next
 
-    input [4:0] rs1_addr, // 2 read lines
-    output reg [31:0] rs1_data,
-
-    input [4:0] rs2_addr,
-    output reg [31:0] rs2_data
+    output reg [31:0] dr1,  // Data-read 1
+    output reg [31:0] dr2,  // Data-read 2
+    output reg [31:0] pc    // Program-counter
 );
-    reg [31:0] x[0:31];
-    always @(*)
-    begin
-        x[0] <= 32'h00000000;
-    end
+    reg [31:0] x[0:31];     // 32-bit registers (x32)
+
+    // Write
     always @(posedge clk)
     begin
-        if(wr_en)
+        if(we)
         begin
-            x[wr_addr] <= wr_data;
+            x[wa1] <= dw1;
         end
-        if(rd_en)
+        pc <= pcnext;
+    end
+    // Read
+    always @(posedge clk)
+    begin
+        if(~we || (wa1 != ra1 && wa1 != ra2)) // To prevent race conditions when trying to write to and read from the same address
         begin
-            rs1_data <= x[rs1_addr];
-            rs2_data <= x[rs2_addr];
+            // Separate address decoders for dr1 and dr2
+            dr1 <= x[ra1]; 
+            dr2 <= x[ra2];
         end
     end
 endmodule
