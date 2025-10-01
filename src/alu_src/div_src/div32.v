@@ -1,5 +1,5 @@
 //Author: Rohan Singh
-//Descriptions: Radix 8 divider for 32I with signed and unsigned support
+//Descriptions: Radix 16 divider for 32I with signed and unsigned support
 module div32 (
     input wire clk,
     input wire rst,
