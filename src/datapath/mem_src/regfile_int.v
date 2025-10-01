@@ -4,9 +4,9 @@
  */
 module regfile_int(
     input clk,
-    input [31:0] ra1,       // Read-address 1
-    input [31:0] ra2,       // Read-address 2
-    input [31:0] wa1,       // Write-address 1
+    input [4:0] ra1,       // Read-address 1
+    input [4:0] ra2,       // Read-address 2
+    input [4:0] wa1,       // Write-address 1
     input [31:0] wd1,       // Write-data 1
     input we,               // Write-enable (LOGIC HIGH)
     input [31:0] pcnext,    // Program-counter next

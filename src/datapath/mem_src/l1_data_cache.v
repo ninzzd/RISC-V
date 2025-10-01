@@ -4,7 +4,7 @@
  */
 module #(parameter N = 1024) l1_data_cache(
     input clk,          // Clock
-    input [31:0] a,     // Address
+    input [$clog2(N)-1:0] a,     // Address
     input [31:0] wd,    // Write-data
     input we,           // Write-enable
 
