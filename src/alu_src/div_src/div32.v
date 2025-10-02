@@ -18,17 +18,6 @@ module div32 (
     reg busy;
     reg sign_quotient, sign_remainder;
     reg [3:0] q_digit;
-
-    // reg [2:0] q_digit;
-    // reg [34:0] remainder_calc; //to allow us to store 35 bit remainder while computing
-    // reg [31:0] divisor_abs;
-    // reg [3:0] count;//=11;
-    // reg busy;
-    // reg sign_quotient, sign_remainder;
-    // reg [2:0] q_digit;
-    // wire [37:0] remainder_shifted = remainder_calc<<3;
-    // reg [31:0]dividend_abs;
-    // Start handling and input absolute value conversion
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             quotient <= 0;
@@ -61,12 +50,8 @@ module div32 (
             remainder_calc = {31'b0, dividend_abs[31:28]}; 
             dividend_abs = dividend_abs<<4;
             quotient <= 0;
-            $display("----- New Division Start -----");
-            $display("Dividend = %0d, Divisor = %0d (signed=%0d)", 
-                     (is_signed ? $signed(dividend_in) : dividend_in),
-                     (is_signed ? $signed(divisor_in) : divisor_in),
-                     is_signed);
-        end else if (busy && count > 0) begin //&& dividend_abs > 0
+        end else if (busy && count > 0 && (dividend_abs > 0 || remainder_calc > 0)) begin
+            //remainder_calc and dividend abs = 0 is a special case to end division early and go to last clock cycle- evaluate usefulness
             if (divisor_abs == 0) begin
                 // division by zero case
                 quotient  <= 32'hFFFFFFFF;
@@ -76,7 +61,7 @@ module div32 (
                 count     <= 0;
                 $display("Division by zero detected!");
             end else begin
-                // Quotient digit selection (unsigned trial)
+                // Quotient digit selection
                 if (remainder_calc >= (divisor_abs << 4) - divisor_abs)                             q_digit = 4'd15;
                 else if (remainder_calc >= (divisor_abs << 4) - (divisor_abs << 1))                 q_digit = 4'd14;
                 else if (remainder_calc >= (divisor_abs << 4) - (divisor_abs << 1) - divisor_abs)   q_digit = 4'd13;
@@ -93,7 +78,6 @@ module div32 (
                 else if (remainder_calc >= (divisor_abs << 1))                                      q_digit = 4'd2;
                 else if (remainder_calc >= divisor_abs)                                             q_digit = 4'd1;
                 else                                                                                q_digit = 4'd0;
-                
                 // Update remainder and quotient
                 if(count>1)
                     remainder_calc <= (remainder_calc - q_digit * divisor_abs)<<4|dividend_abs[31:28];
@@ -102,11 +86,8 @@ module div32 (
                 dividend_abs <= dividend_abs<<4;
                 quotient <= (quotient << 4) | q_digit;
                 count <= count - 1;
-                $display("Cycle %0d: q_digit=%0d, quotient=%0d, remainder_calc=%0d",
-                         (8 - count), q_digit, quotient, remainder_calc);
-                // $display("dividend_abs=%b",dividend_abs);
             end
-        end else if((count==0) && busy) begin //||dividend_abs==0
+        end else if((count==0) && busy || (remainder_calc == 0 && dividend_abs == 0)) begin
             if (is_signed && dividend_in == 32'h80000000 && divisor_in == 32'hFFFFFFFF) begin
                 quotient <= 32'h80000000;
                 remainder <= 0;
@@ -118,9 +99,7 @@ module div32 (
             end
             done <=1;
             busy <=0;
-            $display("Cycle %0d: q_digit=%0d, quotient=%0d, remainder_calc=%0d",
-                         (8 - count), q_digit, quotient, remainder_calc);
-            $display("----- Division End -----");
+
         end
     end
     
