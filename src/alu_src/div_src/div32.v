@@ -52,6 +52,7 @@ module div32 (
             quotient <= 0;
         end else if (busy && count > 0 && (dividend_abs > 0 || remainder_calc > 0)) begin
             //remainder_calc and dividend abs = 0 is a special case to end division early and go to last clock cycle- evaluate usefulness
+            //TO DO: check if it is faster on FPGA
             if (divisor_abs == 0) begin
                 // division by zero case
                 quotient  <= 32'hFFFFFFFF;
