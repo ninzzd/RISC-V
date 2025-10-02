@@ -4,5 +4,8 @@
 # Verilog simulation binaries
 sim/
 
+# Generated log files
+log/
+
 # VS code configurations
 .vscode/

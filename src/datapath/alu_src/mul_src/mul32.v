@@ -1,44 +1,79 @@
-module mul32 #(parameter T = 0.000, parameter N = 32)(
-    input [N-1:0] a,
-    input [N-1:0] b,
-    output [N-1:0] hi,
-    output [N-1:0] lo
+module mul32 #(parameter T = 0.000)(
+    input [31:0] a,
+    input [31:0] b,
+    input mode,
+    output [31:0] hi,
+    output [31:0] lo
 );
     // Error is in bits: 48, 47, 46, 45
-    wire [N-1:0] s0 [2*N-2:0];
-    wire [N-1:0] s1 [2*N-2:0];
-    wire [N-1:0] s2 [2*N-2:0];
-    wire [N-1:0] s3 [2*N-2:0];
-    wire [N-1:0] s4 [2*N-2:0];
-    wire [N-1:0] s5 [2*N-2:0];
-    wire [N-1:0] s6 [2*N-2:0];
-    wire [N-1:0] s7 [2*N-2:0];
-    wire [N-1:0] s8 [2*N-2:0];
+    wire c;
+    wire c_;
+    wire prod_comp;
+    wire a_comp;
+    wire b_comp;
+    wire [31:0] a_;
+    wire [31:0] b_;
+    wire [31:0] a__;
+    wire [31:0] b__;
+    wire [31:0] lo_;
+    wire [31:0] hi_;
+    wire [31:0] lo__;
+    wire [31:0] hi__;
+    wire [31:0] s0 [62:0];
+    wire [31:0] s1 [62:0];
+    wire [31:0] s2 [62:0];
+    wire [31:0] s3 [62:0];
+    wire [31:0] s4 [62:0];
+    wire [31:0] s5 [62:0];
+    wire [31:0] s6 [62:0];
+    wire [31:0] s7 [62:0];
+    wire [31:0] s8 [62:0];
     genvar w;
     genvar j;
     genvar k;
+
+    assign a_comp = mode&a[31];
+    assign b_comp = mode&b[31];
+    assign a_ = a^{32{a_comp}};
+    assign b_ = b^{32{b_comp}};
+    assign prod_comp = mode&(a[31]^b[31]);
+    assign lo__ = lo_^{32{prod_comp}};
+    assign hi__ = hi_^{32{prod_comp}};
+    add32 #(.T(T)) add1_a(
+        .a(a_),
+        .b(32'h00000000),
+        .c_1(a_comp),
+        .s(a__)
+    );
+    add32 #(.T(T)) add1_b(
+        .a(b_),
+        .b(32'h00000000),
+        .c_1(b_comp),
+        .s(b__)
+    );
+
     generate
         // Stage 0: Partial-products generation
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
-            if(w < N)
+            if(w < 32)
             begin
                 for(j = 0;j <= w;j = j+1)
-                    assign #(T) s0[w][j] = a[w-j]&b[j];
+                    assign #(T) s0[w][j] = a__[w-j]&b__[j];
                 // for(k = w+1;k < N;k = k+1)
                 //     assign s0[w][k] = 1'b0;
             end
             else
             begin
-                for(j = 0;j < 2*N - 1 - w;j = j+1)
-                    assign #(T) s0[w][j] = a[N-1-j]&b[w+j+1-N];
+                for(j = 0;j < 63 - w;j = j+1)
+                    assign #(T) s0[w][j] = a__[31-j]&b__[w+j+1-32];
                 // for(k = 2*N-w;k < N;k = k+1)
                 //     assign s0[w][k] = 1'b0;
             end
         end
         // Stage 1
         // Max depth: 28 (27:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 28:
@@ -103,7 +138,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 2
         // Max depth: 19 (18:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 19:
@@ -297,7 +332,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 3 (Error could be here)
         // Max depth: 13 (12:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 13:
@@ -413,7 +448,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 4
         // Max depth: 9 (8:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 9:
@@ -487,7 +522,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 5
         // Max depth: 6 (5:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 6:
@@ -542,7 +577,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 6
         // Max depth: 4 (3:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 4:
@@ -581,7 +616,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 7
         // Max depth: 3 (2:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 3:
@@ -607,7 +642,7 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
         end
         // Stage 8
         // Max depth: 2 (1:0)
-        for(w = 0;w <= 2*N-2;w = w+1)
+        for(w = 0;w <= 62;w = w+1)
         begin
             case(w)
                 2:
@@ -631,19 +666,30 @@ module mul32 #(parameter T = 0.000, parameter N = 32)(
             endcase 
         end
     endgenerate
-
-    wire c;
     add32 #(.T(T)) add0(
         .a({s8[31][0],s8[30][0],s8[29][0],s8[28][0],s8[27][0],s8[26][0],s8[25][0],s8[24][0],s8[23][0],s8[22][0],s8[21][0],s8[20][0],s8[19][0],s8[18][0],s8[17][0],s8[16][0],s8[15][0],s8[14][0],s8[13][0],s8[12][0],s8[11][0],s8[10][0],s8[9][0],s8[8][0],s8[7][0],s8[6][0],s8[5][0],s8[4][0],s8[3][0],s8[2][0],s8[1][0],s8[0][0]}),
         .b({s8[31][1],s8[30][1],s8[29][1],s8[28][1],s8[27][1],s8[26][1],s8[25][1],s8[24][1],s8[23][1],s8[22][1],s8[21][1],s8[20][1],s8[19][1],s8[18][1],s8[17][1],s8[16][1],s8[15][1],s8[14][1],s8[13][1],s8[12][1],s8[11][1],s8[10][1],s8[9][1],s8[8][1],s8[7][1],s8[6][1],s8[5][1],s8[4][1],s8[3][1],s8[2][1],s8[1][1],1'b0}),
         .c_1(1'b0),
-        .s(lo),
+        .s(lo_),
         .c31(c)
     );
     add32 #(.T(T)) add1(
         .a({1'b0, s8[62][0],s8[61][0],s8[60][0],s8[59][0],s8[58][0],s8[57][0],s8[56][0],s8[55][0],s8[54][0],s8[53][0],s8[52][0],s8[51][0],s8[50][0],s8[49][0],s8[48][0],s8[47][0],s8[46][0],s8[45][0],s8[44][0],s8[43][0],s8[42][0],s8[41][0],s8[40][0],s8[39][0],s8[38][0],s8[37][0],s8[36][0],s8[35][0],s8[34][0],s8[33][0],s8[32][0]}),
         .b({1'b0, s8[62][1],s8[61][1],s8[60][1],s8[59][1],s8[58][1],s8[57][1],s8[56][1],s8[55][1],s8[54][1],s8[53][1],s8[52][1],s8[51][1],s8[50][1],s8[49][1],s8[48][1],s8[47][1],s8[46][1],s8[45][1],s8[44][1],s8[43][1],s8[42][1],s8[41][1],s8[40][1],s8[39][1],s8[38][1],s8[37][1],s8[36][1],s8[35][1],s8[34][1],s8[33][1],s8[32][1]}),
         .c_1(c),
+        .s(hi_)
+    );
+    add32 #(.T(T)) add2(
+        .a(lo__),
+        .b(32'h00000000),
+        .c_1(prod_comp),
+        .s(lo),
+        .c31(c_)
+    );
+    add32 #(.T(T)) add3(
+        .a(hi__),
+        .b(32'h00000000),
+        .c_1(c_),
         .s(hi)
     );
 endmodule
