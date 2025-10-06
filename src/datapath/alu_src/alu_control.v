@@ -1,8 +1,9 @@
 //Author: Rohan Singh
 //Descriptions: ALU control unit for RISC-V 32I
-module alu_control #(parameter T = 0.000)(
+module alu_control  (
     input [31:0] a,b,
-    input [3:0] alu_op,
+    input [2:0] alu_op,
+    // input [3:0] alu_op,
     //alu_op 
     // 0000 - add
     // 0001 - sub

@@ -9,11 +9,11 @@ module regfile_int(
     input [31:0] wa1,       // Write-address 1
     input [31:0] dw1,       // Data-write 1
     input we,               // Write-enable
-    input [31:0] pcnext,    // Program-counter next
+    // input [31:0] pcnext,    // Program-counter next
 
     output reg [31:0] dr1,  // Data-read 1
     output reg [31:0] dr2,  // Data-read 2
-    output reg [31:0] pc    // Program-counter
+    // output reg [31:0] pc    // Program-counter
 );
     reg [31:0] x[0:31];     // 32-bit registers (x32)
 
@@ -24,7 +24,7 @@ module regfile_int(
         begin
             x[wa1] <= dw1;
         end
-        pc <= pcnext;
+        // pc <= pcnext;
     end
     // Read
     always @(posedge clk)
