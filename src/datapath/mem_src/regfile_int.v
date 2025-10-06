@@ -24,7 +24,7 @@ module regfile_int(
         begin
             x[wa1] <= wd1;
         end
-        pc <= pcnext;
+        // pc <= pcnext;
     end
     // Read
     always @(posedge clk)

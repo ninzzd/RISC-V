@@ -1,8 +1,9 @@
 //Author: Rohan Singh
 //Descriptions: ALU control unit for RISC-V 32I
-module alu_control #(parameter T = 0.000)(
+module alu_control  (
     input [31:0] a,b,
-    input [3:0] alu_op,
+    input [2:0] alu_op,
+    // input [3:0] alu_op,
     //alu_op 
     // 0000 - add
     // 0001 - sub
@@ -12,7 +13,8 @@ module alu_control #(parameter T = 0.000)(
     // 0101 - sll
     // 0110 - srl
     // 0111 - sra
-    // 1000 - sltu
+    // 1000 - slt
+    // 1001 - sltu
     output [31:0] result
 );
 
@@ -48,6 +50,16 @@ module alu_control #(parameter T = 0.000)(
         .mode(sr_mode),
         .res(sr_result)
     );
+    slt_32 #(.T(T)) slt32 (
+        .x1(a),
+        .x2(b),
+        .out(slt_result)
+    );
+    sltu_32 #(.T(T)) sltu32 (
+        .x1(a),
+        .x2(b),
+        .out(sltu_result)
+    );
     // mul32 #(.T(T)) u_mul32 (
     //     .a(a),
     //     .b(b),
@@ -65,7 +77,8 @@ module alu_control #(parameter T = 0.000)(
             4'b0100: result_reg = a & b;
             4'b0101: result_reg = sl_result; // sll (structural)
             4'b011?: result_reg = sr_result; // srl/a (structural)
-            4'b1000: result_reg = (a < b) ? 32'b1 : 32'b0;
+            4'b1000: result_reg = slt_result; //slt (structural)
+            4'b1001: result_reg = sltu_result; //sltu (structural)
             default: result_reg = 32'b0;
         endcase
     end
