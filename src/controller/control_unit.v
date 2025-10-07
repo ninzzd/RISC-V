@@ -8,8 +8,7 @@ module control_unit(
     input funct7,
     output RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD,
     output [1:0] ImmSrcD, ResultSrcD,
-    output [2:0] ALUControlD;
-
+    output [2:0] ALUControlD
 );
     // reg [31:0] instr;
 

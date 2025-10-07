@@ -9,6 +9,7 @@ module lfsr #(parameter N = 32)(
     output [N-1:0] q
 );
     wire [N-1:0] xors;
+    reg [N-1:0] mask_;
     reg [N-1:0] dff;
     genvar i;
     assign q = dff;
@@ -26,7 +27,10 @@ module lfsr #(parameter N = 32)(
     always @(posedge clk)
     begin
         if(rst)
+        begin
             dff <= seed;
+            mask_ <= mask;
+        end
         else
         begin
             dff <= {dff[N-2:0],xors[N-1]};

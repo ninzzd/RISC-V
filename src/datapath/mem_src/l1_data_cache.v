@@ -2,7 +2,7 @@
     Author: Ninaad Desai
     Description: Simple, behavioral implementation of the L1 Data Cache (inferred BRAM). Single read and write lines with common address decoder
  */
-module #(parameter N = 1024) l1_data_cache(
+module l1_data_cache #(parameter N = 1024)(
     input clk,          // Clock
     input [$clog2(N)-1:0] a,     // Address
     input [31:0] wd,    // Write-data
