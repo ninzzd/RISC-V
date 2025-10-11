@@ -1,0 +1,3 @@
+[submodule "src/datapath/alu_src/div_src"]
+	path = src/datapath/alu_src/div_src
+	url = https://github.com/Roh-13/Verilog-Divider
