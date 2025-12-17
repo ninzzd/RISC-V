@@ -2,6 +2,7 @@
 *.o
 
 # Verilog simulation binaries
+*.vvp
 sim/
 
 # Generated log files
