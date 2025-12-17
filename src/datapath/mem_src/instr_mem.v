@@ -2,7 +2,7 @@
     Author: Ninaad Desai
     Description: Simple, behavioral implementation of the L1 Instruction ROM (direct LUT)
  */
-module l1_instr_cache #(parameter N = 1024)(
+module instr_mem #(parameter N = 1024)(
     input [$clog2(N)-1:0] a,
     output [31:0] rd
 );
