@@ -2,15 +2,31 @@ module datapath #(
     parameter pcmux_N = 2;
 ) (
     input clk,
-    input [$clog2(pcmux_N)-1:0] pcsrc
+    input [$clog2(pcmux_N)-1:0] pcctl, // select/control signal for pcmux
+    input regwe, // register write-enable
+    input [3:0] aluctl, // control signal for ALU
+    input [1:0] mulctl, // control signal for MU 
+
+    output [6:0] opcode,
+    output [2:0] func3,
+    output func7b5 // For R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
+
 );
     // -----------------------------------------------------------
     // Regs
     reg [31:0] pc;
+
     // Wires
     wire [31:0] pcadd4;
     wire [31:0] pcnext;
     wire [31:0] instr;
+    wire [31:0] a;
+    wire [31:0] b;
+    wire [31:0] regwrite;
+    wire [31:0] alures;
+    wire aluzero;
+    wire [31:0] mulres;
+    wire [31:0] divres;
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
@@ -40,30 +56,43 @@ module datapath #(
         // .re(instr_mem_re),
         .clk(clk)
     );
+    assign func3 = instr[14:12];
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
     // regfile
     regfile_int rfi(
         .clk(clk),
-        .ra1(),
-        .ra2(),
-        .rd1(),
-        .rd2(),
-        .wa1(),
-        .wd1(),
-        .we()
+        .ra1(instr[19:15]), // rs1
+        .ra2(instr[24:20]), // rs2
+        .rd1(a), // value at rs1
+        .rd2(b), // value at rs2
+        .wa1(instr[11:7]),
+        .wd1(regwrite),
+        .we(regwe)
     );
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
     // ALU
-    alu alu1(
-        .a(),
-        .b(),
-        .aluop(),
-        .result(),
-        .zero()
+    alu ALU(
+        .a(a),
+        .b(b),
+        .aluop(aluctl),
+        .result(alures),
+        .zero(aluzero)
     )
+    // -----------------------------------------------------------
+
+    // -----------------------------------------------------------
+    // MU (Multiply Unit)
+    mul32p MU(
+        // incomplete, changes required in multiplier repo
+    )
+    // -----------------------------------------------------------
+
+    // -----------------------------------------------------------
+    // QRU (Divider or Quotient and Reminder Unit)
+        // must add rohan's divder module instance
     // -----------------------------------------------------------
 endmodule
