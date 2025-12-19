@@ -9,18 +9,19 @@ module regfile_int(
     input [4:0] wa1,       // Write-address 1
     input [31:0] wd1,       // Write-data 1
     input we,               // Write-enable (LOGIC HIGH)
-    input [31:0] pcnext,    // Program-counter next
 
     output reg [31:0] rd1,  // Read-data 1
     output reg [31:0] rd2,  // Read-data 2
-    output reg [31:0] pc    // Program-counter
 );
     reg [31:0] x[0:31];     // 32-bit registers (x32)
-
+    initial
+    begin
+        x[0] <= 32'd0;  // x0 is zero 
+    end
     // Write
     always @(posedge clk)
     begin
-        if(we)
+        if(we && wa1 != 5'd0) // x0 must not be updated
         begin
             x[wa1] <= wd1;
         end
