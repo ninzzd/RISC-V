@@ -28,7 +28,7 @@ module mu(
     end
 
     // mulresmux sel/ctl line
-    assign mulresctl = ~(mulctl[1] | mulctl[0]);
+    assign mulresctl = mulctl[1] | mulctl[0];
 
     buffer #(
         .W(1),

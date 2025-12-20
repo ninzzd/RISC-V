@@ -17,12 +17,16 @@ module mu_tb;
         .mulres(res)
     );
 
+    always @(posedge clk)
+    begin
+        $write("Time = %t, a = %d, b = %d, mulctl_buffered = %2b, res = %d\n",$realtime,$signed(a),$signed(b),mulctl,$signed(res));
+    end
+
     initial begin
-        $monitor("Time = %t, a = %d, b = %d, mulctl_buffered = %2b, res = %d",$realtime,a,b,mulctl,res);
         clk <= 0;
 
-        a <= 32'd3;
-        b <= 32'd4;
+        a <= -3;
+        b <= -4;
         mulctl <= 2'b00;
 
         #10
@@ -34,7 +38,12 @@ module mu_tb;
         #10
         mulctl <= 2'b11;
 
-        #200
+        #10
+        a <= 32'hzzzzzzzz;
+        b <= 32'hzzzzzzzz;
+        mulctl <= 2'bzz;
+
+        #100
         $finish;
     end
 endmodule
