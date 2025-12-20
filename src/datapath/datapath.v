@@ -1,17 +1,17 @@
 module datapath #(
     parameter pcmux_N = 2;
+    parameter ifuresctl_N = 2;
 ) (
     input clk,
     input [$clog2(pcmux_N)-1:0] pcctl, // select/control signal for pcmux
     input regwe, // register write-enable
     input [3:0] aluctl, // control signal for ALU
     input [1:0] mulctl, // control signal for MU 
-    input ifuresctl // control signal for ifuresmux
+    input [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
 
     output [6:0] opcode,
     output [2:0] func3,
     output func7b5 // For R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
-
 );
     // -----------------------------------------------------------
     // Regs
@@ -39,7 +39,7 @@ module datapath #(
         .s(pcadd4)
     );
     mux #(.W(32), .N(pcmux_N)) pc_mux (
-        .in({pcadd4}), // TODO: add other inputs for branch/jump
+        .in({{32{1'b0}},pcadd4}), // for now, only allows pcadd4 (testing R-type instructions only)
         .sel(pcsrc), // (for now) pcsrc = 0 => pcadd4
         .out(pcnext)
     );
@@ -104,7 +104,7 @@ module datapath #(
     mux #(
         .W(32),
         .N(2)
-    ) ifuresmux( // mux for integer functional unit (ALU + MU + QRU)
+    ) ifuresmux( // mux for integer functional unit (IFU = ALU + MU + QRU)
         .in({mulres,alures}),
         .sel(ifuresctl),
         .out(regwrite)
