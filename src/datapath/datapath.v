@@ -6,6 +6,7 @@ module datapath #(
     input regwe, // register write-enable
     input [3:0] aluctl, // control signal for ALU
     input [1:0] mulctl, // control signal for MU 
+    input ifuresctl // control signal for ifuresmux
 
     output [6:0] opcode,
     output [2:0] func3,
@@ -67,7 +68,7 @@ module datapath #(
         .ra2(instr[24:20]), // rs2
         .rd1(a), // value at rs1
         .rd2(b), // value at rs2
-        .wa1(instr[11:7]),
+        .wa1(instr[11:7]), // rd
         .wd1(regwrite),
         .we(regwe)
     );
@@ -81,18 +82,32 @@ module datapath #(
         .aluop(aluctl),
         .result(alures),
         .zero(aluzero)
-    )
+    );
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
     // MU (Multiply Unit)
-    mul32p MU(
-        // incomplete, changes required in multiplier repo
-    )
+    mu MU(
+        .clk(clk)
+        .a(a),
+        .b(b),
+        .mulctl(mulctl),
+        .mulres(mulres)
+    );
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
     // QRU (Divider or Quotient and Reminder Unit)
         // must add rohan's divder module instance
     // -----------------------------------------------------------
+
+    mux #(
+        .W(32),
+        .N(2)
+    ) ifuresmux( // mux for integer functional unit (ALU + MU + QRU)
+        .in({mulres,alures}),
+        .sel(ifuresctl),
+        .out(regwrite)
+    );
+    
 endmodule
