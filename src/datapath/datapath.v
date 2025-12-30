@@ -3,8 +3,11 @@ module datapath #(
     parameter ifuresctl_N = 2;
 ) (
     input clk,
-    input [$clog2(pcmux_N)-1:0] pcctl, // select/control signal for pcmux
+    input [$clog2(pcmux_N)-1:0] pcmuxctl, // select/control signal for pcmux
+    input pcnextctl, // control signal for updating/asserting new value onto pc
+    input instrre, // control signal to fetch new instruction (instruction read enable)
     input regwe, // register write-enable
+    input regre, // register read-enable
     input [3:0] aluctl, // control signal for ALU
     input [1:0] mulctl, // control signal for MU 
     input [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
@@ -31,36 +34,18 @@ module datapath #(
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
-    // logic for pcnext
-    add32 pc_adder (
-        .a(pc),
-        .b(32'd4),
-        .c_1(1'b0),
-        .s(pcadd4)
-    );
-    mux #(.W(32), .N(pcmux_N)) pc_mux (
-        .in({{32{1'b0}},pcadd4}), // for now, only allows pcadd4 (testing R-type instructions only)
-        .sel(pcsrc), // (for now) pcsrc = 0 => pcadd4
-        .out(pcnext)
-    );
-    // pc update
-    always @(posedge clk) begin
-        pc <= pcnext;
-    end
-    // -----------------------------------------------------------
-
-    // -----------------------------------------------------------
-    // instruction fetch
+    // Stage 1: Instruction Fetch (IF)
     instr_mem imem ( // simple instruction memory with clocked LUT
         .a(pc),
         .rd(instr),
-        // .re(instr_mem_re),
+        .re(instrre),
         .clk(clk)
     );
     assign func3 = instr[14:12];
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
+    // Stage 2: Instruction Decode (ID)
     // regfile
     regfile_int rfi(
         .clk(clk),
@@ -69,12 +54,14 @@ module datapath #(
         .rd1(a), // value at rs1
         .rd2(b), // value at rs2
         .wa1(instr[11:7]), // rd
-        .wd1(regwrite),
-        .we(regwe)
+        .wd1(regwrite), // Stage 5: Write Back (WB)
+        .we(regwe),
+        .re(regre)
     );
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
+    // Stage 3: Execute (EX)
     // ALU
     alu ALU(
         .a(a),
@@ -110,4 +97,24 @@ module datapath #(
         .out(regwrite)
     );
     
+    // -----------------------------------------------------------
+    // Stage 5: Write Back (WB)
+    // logic for pcnext
+    add32 pc_adder (
+        .a(pc),
+        .b(32'd4),
+        .c_1(1'b0),
+        .s(pcadd4)
+    );
+    mux #(.W(32), .N(pcmux_N)) pc_mux (
+        .in({{32{1'b0}},pcadd4}), // for now, only allows pcadd4 (testing R-type instructions only)
+        .sel(pcmuxctl), // (for now) pcsrc = 0 => pcadd4
+        .out(pcnext)
+    );
+    // pc update
+    always @(posedge clk) begin
+        if(pcnextctl)
+            pc <= pcnext;
+    end
+    // -----------------------------------------------------------
 endmodule

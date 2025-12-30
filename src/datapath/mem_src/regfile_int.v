@@ -9,6 +9,7 @@ module regfile_int(
     input [4:0] wa1,       // Write-address 1
     input [31:0] wd1,       // Write-data 1
     input we,               // Write-enable (LOGIC HIGH)
+    input re,               // Read-enable (LOGIC HIGH)
 
     output reg [31:0] rd1,  // Read-data 1
     output reg [31:0] rd2,  // Read-data 2
@@ -30,7 +31,7 @@ module regfile_int(
     // Read
     always @(posedge clk)
     begin
-        if(~we || (wa1 != ra1 && wa1 != ra2)) // To prevent race conditions when trying to write to and read from the same address
+        if(re && (~we || (wa1 != ra1 && wa1 != ra2))) // To prevent race conditions when trying to write to and read from the same address
         begin
             // Separate address decoders for dr1 and dr2
             rd1 <= x[ra1]; 
