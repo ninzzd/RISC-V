@@ -29,18 +29,21 @@ module controller #(
         3'b000: // IF
         begin
             instrre <= 1'b1;
+            state <= 3'b001;
         end
         3'b001: // ID
         begin
             regre <= 1'b1;
+            state <= 3'b010;
         end
         3'b010: // EX
         begin
-
+            state <= 3'b011;
         end
         3'b011: // WB
         begin
             regwe <= 1'b1;
+            state <= 3'b000;
         end
     endcase
    end  
