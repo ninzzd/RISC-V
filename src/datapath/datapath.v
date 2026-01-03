@@ -14,7 +14,7 @@ module datapath #(
 
     output [6:0] opcode,
     output [2:0] func3,
-    output func7b5 // For R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
+    output [1:0] func7b50 // For R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
 );
     // -----------------------------------------------------------
     // Regs
@@ -41,7 +41,9 @@ module datapath #(
         .re(instrre),
         .clk(clk)
     );
+    assign opcode = instr[6:0];
     assign func3 = instr[14:12];
+    assign func7b50 = {instr[30],instr[25]};
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
