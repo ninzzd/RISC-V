@@ -9,7 +9,7 @@ module mu(
     // 00 - mul
     // 01 - mulh
     // 10 - mulsu
-    // 11 - mulu
+    // 11 - mulhu
     wire [31:0] lo;
     wire [31:0] hi;
     reg [1:0] mode;

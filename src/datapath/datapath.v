@@ -87,7 +87,7 @@ module datapath #(
 
     // -----------------------------------------------------------
     // QRU (Divider or Quotient and Reminder Unit)
-        // must add rohan's divder module instance
+        // must add rohan's divider module instance
     // -----------------------------------------------------------
 
     mux #(
@@ -95,7 +95,7 @@ module datapath #(
         .N(2)
     ) ifuresmux( // mux for integer functional unit (IFU = ALU + MU + QRU)
         .in({mulres,alures}),
-        .sel(ifuresctl),
+        .sel(ifuresctl), // 0 => ALU, 1 => MU
         .out(regwrite)
     );
     

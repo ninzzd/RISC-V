@@ -23,6 +23,18 @@ module controller #(
    initial begin
     state <= 3'b000;
    end
+
+   ex_controller #(
+        .ifuresctl_N(ifuresctl_N)
+   ) exc (
+        .opcode(opcode),
+        .func3(func3),
+        .func7b50(func7b50),
+        .aluctl(aluctl),
+        .mulctl(mulctl),
+        .ifuresctl(ifuresctl)
+   ); // control signals for the EX stage are ready in the first clock cycle itself
+
    always @(posedge clk) // Main controller FSM 
    begin
     case(state):
