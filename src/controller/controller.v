@@ -27,12 +27,14 @@ module controller #(
    ex_controller #(
         .ifuresctl_N(ifuresctl_N)
    ) exc (
+        .clk(clk),
         .opcode(opcode),
         .func3(func3),
         .func7b50(func7b50),
         .aluctl(aluctl),
         .mulctl(mulctl),
-        .ifuresctl(ifuresctl)
+        .ifuresctl(ifuresctl),
+        .valid()
    ); // control signals for the EX stage are ready in the first clock cycle itself
 
    always @(posedge clk) // Main controller FSM 

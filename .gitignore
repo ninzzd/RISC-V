@@ -5,6 +5,9 @@
 *.vvp
 sim/
 
+# GTK wavform dumpfiles
+*.vcd
+
 # Generated log files
 log/
 

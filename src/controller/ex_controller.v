@@ -1,14 +1,18 @@
 // Author: Ninaad Desai
-// Description: Describese the part of the controller that handles the execution (EX) stage control signals combinatorially
+// Description: Describes the part of the controller that handles the execution (EX) stage control signals combinatorially
 module ex_controller #(
     parameter ifuresctl_N = 2;
 )(
+    input clk,
     input [6:0] opcode,
     input [2:0] func3,
     input [1:0] func7b50,
+    input aluvalid,
+    input mulvalid,
     output reg [3:0] aluctl,
     output reg [1:0] mulctl,
-    output reg [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
+    output reg [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
+    output valid
 );
     always @(*)
     begin
