@@ -11,104 +11,54 @@ module ex_controller #(
     input mul_done,
     output reg [3:0] aluctl,
     output reg [1:0] mulctl,
-    output reg [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
-    output valid // logic not yet implemented
+    output reg [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
 );
-    always @(*)
+
+    wire [3:0] aluop;
+    wire [1:0] mulop;
+
+
+    always @(*) // Deciding ctl sig for alu
     begin
         case(opcode): // RV32IM
             7'b0110011: // R-Type
             begin
-                case(funct3)
-                    3'b000:
-                    begin
-                        if(func7b50 == 2'b10) // sub
-                        begin
-                            aluctl <= 4'b0001;
-                            ifuresctl <= 1'b0;
-                        end
-                        else if(func7b50 == 2'b00) // add
-                        begin
-                            aluctl <= 4'b0000;
-                            ifuresctl <= 1'b0;
-                        end   
-                        else if(func7b50 == 2'b01) // mul
-                        begin
-                            mulctl <= 2'b00;
-                            ifuresctl <= 1'b1;
-                        end
-                    end
-                    3'b001:
-                        if(func7b50[0]) // mulh
-                        begin
-                            mulctl <= 2'b01;
-                            ifuresctl <= 1'b1;
-                        end
-                        else // sll
-                        begin
-                            aluctl <= 4'b0101;
-                            ifuresctl <= 1'b0;
-                        end
-                    3'b010:
-                        if(func7b50[0]) // mulhsu
-                        begin
-                            mulctl <= 2'b10;
-                            ifuresctl <= 1'b1;
-                        end
-                        else // slt
-                        begin
-                            aluctl <= 4'b1000;
-                            ifuresctl <= 1'b0;
-                        end
-                    3'b011:
-                        if(func7b50[0]) // mulhu
-                        begin
-                            mulctl <= 2'b11;
-                            ifuresctl <= 1'b1;
-                        end
-                        else // sltu
-                        begin
-                            aluctl <= 4'b1001;
-                            ifuresctl <= 1'b0;
-                        end
-                    3'b100:
-                        if(func7b50[0]) // div
-                        ; // to be implemented
-                        else // xor
-                        begin
-                            aluctl <= 4'b0010;
-                            ifuresctl <= 1'b0;
-                        end
-                    3'b101:
-                        if(func7b50 == 2'b10) // sra
-                        begin
-                            aluctl <= 4'b0111;
-                            ifuresctl <= 1'b0;
-                        end
-                        else if(func7b50 == 2'b00)    // srl
-                        begin
-                            aluctl <= 4'b0110;
-                            ifuresctl <= 1'b0;
-                        end
-                        else if(func7b50 == 2'b01) // divu
-                        ; // to be implemented
-                    3'b110:
-                        if(func7b50[0]) // rem
-                        ; // to be implemented
-                        else // or
-                        begin
-                            aluctl <= 4'b0011;
-                            ifuresctl <= 1'b0;
-                        end
-                    3'b111:
-                        if(func7b50[0]) // remu
-                        ; // to be implemented
-                        else // and
-                        begin
-                            aluctl <= 4'b0100;
-                            ifuresctl <= 1'b0;
-                        end
+                case(func3):
+                    3'b000: aluctl <= {3'b000,func7b50[1]}// add, sub
+                    3'b001: aluctl <= 4'b0101; // sll 
+                    3'b010: aluctl <= 4'b1000; // slt
+                    3'b011: aluctl <= 4'b1001; // sltu
+                    3'b100: aluctl <= 4'b0010; // xor
+                    3'b101: aluctl <= {3'b011,func7b50[1]}; // srl, sra
+                    3'b110: aluctl <= 4'b0011; // or
+                    3'b111: aluctl <= 4'b0100; // and
+                    default: aluctl <= 4'b0100; // and (reason: shorter critical path)
                 endcase
+            end
+        endcase
+    end
+
+    always @(*) // Deciding ctl sig for mu
+    begin
+        case(opcode): // RV32IM
+            7'b0110011: // R-Type
+            begin
+                
+            end
+        endcase
+    end
+
+    always @(*) // Deciding ifuresctl
+    begin
+        case(opcode): // RV32IM
+            7'b0110011: // R-Type
+            begin
+                // case(func7b50):
+                //     2'b00: ifuresctl = 0; // ALU output
+                //     2'b01: ifuresctl = 1; // MU output
+                //     default: ifuresctl = 0; // ALU output
+                // endcase
+                ifuresctl <= ~func7b50[1]&func7b50[0]; // ALU output
             end
         endcase
     end
