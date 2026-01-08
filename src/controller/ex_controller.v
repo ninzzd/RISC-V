@@ -7,12 +7,12 @@ module ex_controller #(
     input [6:0] opcode,
     input [2:0] func3,
     input [1:0] func7b50,
-    input aluvalid,
-    input mulvalid,
+    // input alu_done, // Not required, ALU is combinatorial and not internally pipelined
+    input mul_done,
     output reg [3:0] aluctl,
     output reg [1:0] mulctl,
     output reg [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
-    output valid
+    output valid // logic not yet implemented
 );
     always @(*)
     begin

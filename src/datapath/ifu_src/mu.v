@@ -1,6 +1,6 @@
 module mu(
     input clk,
-    input strb,
+    input en,
     input [31:0] a,
     input [31:0] b,
     input [1:0] mulctl,
@@ -26,13 +26,13 @@ module mu(
     // Buffer inputs to determine validity
     always @(posedge clk)
     begin
-        if(strb) 
+        if(en) 
         begin
             a_ <= a;
             b_ <= b;
             mulctl_ <= mulctl;
         end
-        desired_op <= strb;
+        desired_op <= en;
     end
     // LUT for multiplier mode (sign interpretation)
     always @(*)

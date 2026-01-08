@@ -16,7 +16,7 @@ module mu_tb;
     reg [31:0] a;
     reg [31:0] b;
     reg [1:0] mulctl;
-    reg strb;
+    reg en;
     wire [31:0] res;
     wire valid;
 
@@ -24,7 +24,7 @@ module mu_tb;
 
     mu uut(
         .clk(clk),
-        .strb(strb),
+        .en(en),
         .a(a),
         .b(b),
         .mulctl(mulctl),
@@ -35,7 +35,7 @@ module mu_tb;
     always @(posedge clk)
     begin
         counter <= counter + 1;
-        $write("Sr.No = %2d, Time = %6t, a = %2d, b = %2d, strb = %b, mulctl_buffered = %2b, res = %d, valid = %b\n",counter, $realtime,$signed(a),$signed(b), strb,mulctl,$signed(res), valid);
+        $write("Sr.No = %2d, Time = %6t, a = %2d, b = %2d, en = %b, mulctl_buffered = %2b, res = %d, valid = %b\n",counter, $realtime,$signed(a),$signed(b), en,mulctl,$signed(res), valid);
     end
 
     initial begin
@@ -47,35 +47,35 @@ module mu_tb;
         a <= -3;
         b <= -4;
         mulctl <= 2'b00;
-        strb <= 1'b1;
+        en <= 1'b1;
         #7
-        strb <= 1'b0;
+        en <= 1'b0;
 
         #3
         mulctl <= 2'b01;
-        strb <= 1'b1;
+        en <= 1'b1;
         #7
-        strb <= 1'b0;
+        en <= 1'b0;
 
         #3
         mulctl <= 2'b10;
-        strb <= 1'b1;
+        en <= 1'b1;
         #7
-        strb <= 1'b0;
+        en <= 1'b0;
 
         #3
         mulctl <= 2'b11;
-        strb <= 1'b1;
+        en <= 1'b1;
         #7
-        strb <= 1'b0;
+        en <= 1'b0;
 
         #3
         a <= 32'd16;
         b <= 32'd48;
         mulctl <= 2'b00;
-        strb <= 1'b1;
+        en <= 1'b1;
         #7
-        strb <= 1'b0;
+        en <= 1'b0;
 
         #100
         $finish;
