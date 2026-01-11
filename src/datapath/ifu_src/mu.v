@@ -5,7 +5,7 @@ module mu(
     input [31:0] b,
     input [1:0] mulctl,
     output [31:0] mulres,
-    output valid
+    output done
 );
     // mulctl - control signal for the type of multiply instruction
     // 00 - mul
@@ -23,7 +23,7 @@ module mu(
     wire mulresctl; // 0 - lo, 1 - hi
     wire mulresctl_buffered;
 
-    // Buffer inputs to determine validity
+    // To buffer inputs to determine validity
     always @(posedge clk)
     begin
         if(en) 
@@ -54,7 +54,7 @@ module mu(
     ) mulresctl_buff(
         .clk(clk),
         .in({desired_op,mulresctl}),
-        .out({valid,mulresctl_buffered})
+        .out({done,mulresctl_buffered})
     );
 
     mul32p mul(
@@ -74,4 +74,5 @@ module mu(
         .sel(mulresctl_buffered),
         .out(mulres)
     );
+    
 endmodule

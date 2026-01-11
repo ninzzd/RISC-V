@@ -8,13 +8,15 @@ module datapath #(
     input instrre, // control signal to fetch new instruction (instruction read enable)
     input regwe, // register write-enable
     input regre, // register read-enable
+    input mulen, // enable signal for MU
     input [3:0] aluctl, // control signal for ALU
     input [1:0] mulctl, // control signal for MU 
     input [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
 
     output [6:0] opcode,
     output [2:0] func3,
-    output [1:0] func7b50 // For R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
+    output [1:0] func7b50, // For R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
+    output exdone // valid signal from EX stage
 );
     // -----------------------------------------------------------
     // Regs
@@ -31,6 +33,8 @@ module datapath #(
     wire aluzero;
     wire [31:0] mulres;
     wire [31:0] divres;
+    wire mudone;
+    wire qrudone;
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
@@ -77,17 +81,29 @@ module datapath #(
     // -----------------------------------------------------------
     // MU (Multiply Unit)
     mu MU(
-        .clk(clk)
+        .clk(clk),
+        .en(mulen),
         .a(a),
         .b(b),
         .mulctl(mulctl),
-        .mulres(mulres)
+        .mulres(mulres),
+        .done(mudone)
     );
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
     // QRU (Divider or Quotient and Reminder Unit)
         // must add rohan's divider module instance
+        div32 divunit (
+            .clk(clk),
+            .rst(1'b0), // no reset
+            .start(1'b0), // not used currently
+            .is_signed(1'b0), // unsigned division
+            .dividend_in(a),
+            .divisor_in(b),
+            .quotient(divres),
+            .remainder() // remainder not used currently
+        );
     // -----------------------------------------------------------
 
     mux #(
@@ -97,6 +113,14 @@ module datapath #(
         .in({mulres,alures}),
         .sel(ifuresctl), // 0 => ALU, 1 => MU
         .out(regwrite)
+    );
+    mux #(
+        .W(1),
+        .N(2)
+    ) exdonemux( // mux for EX stage done signal
+        .in({mudone,1'b1}), // ALU is combinational, so always done
+        .sel(ifuresctl),
+        .out(exdone)
     );
     
     // -----------------------------------------------------------
