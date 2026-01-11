@@ -47,14 +47,14 @@ module ex_controller #(
                     3'b001: mulctl <= 2'b01; // mulh
                     3'b010: mulctl <= 2'b10; // mulsu
                     3'b011: mulctl <= 2'b11; // mulhu
-                    3'b100: divctl <= 2'b00; // div
-                    3'b101: divctl <= 2'b01; // divu
-                    3'b110: divctl <= 2'b10; // rem
-                    3'b111: divctl <= 2'b11; // remu
+                    // 3'b100: divctl <= 2'b00; // div
+                    // 3'b101: divctl <= 2'b01; // divu
+                    // 3'b110: divctl <= 2'b10; // rem
+                    // 3'b111: divctl <= 2'b11; // remu
                     default: 
                     begin
-                        mulctl <= 2'b00; // mul (reason: shorter critical path)
-                        divctl <= 2'b00; // div (reason: shorter critical path)
+                        // mulctl <= 2'b00; // mul (reason: shorter critical path)
+                        // divctl <= 2'b00; // div (reason: shorter critical path)
                     end
                 endcase
             end
