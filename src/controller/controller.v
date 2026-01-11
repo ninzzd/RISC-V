@@ -10,6 +10,7 @@ module controller #(
     input [6:0] opcode,
     input [2:0] func3,
     input [1:0] func7b50, // For ALU R-type, func7 = 0x00 (b5 is 0) or 0x20 (b5 is 1) 
+    input exdone, // valid signal from EX stage
                         // For M extension R-type, func7 = 0x01 (b0 is 1) 
     output reg [$clog2(pcmux_N)-1:0] pcmuxctl, // select/control signal for pcmux
     output reg pcnextctl, // control signal for updating pc

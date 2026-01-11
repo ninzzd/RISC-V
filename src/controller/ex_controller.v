@@ -3,7 +3,6 @@
 module ex_controller #(
     parameter ifuresctl_N = 2;
 )(
-    input clk,
     input [6:0] opcode,
     input [2:0] func3,
     input [1:0] func7b50,
@@ -38,12 +37,26 @@ module ex_controller #(
         endcase
     end
 
-    always @(*) // Deciding ctl sig for mu
+    always @(*) // Deciding ctl sig for mu/qru
     begin
         case(opcode): // RV32IM
             7'b0110011: // R-Type
             begin
-                
+                case(func3):
+                    3'b000: mulctl <= 2'b00; // mul
+                    3'b001: mulctl <= 2'b01; // mulh
+                    3'b010: mulctl <= 2'b10; // mulsu
+                    3'b011: mulctl <= 2'b11; // mulhu
+                    3'b100: divctl <= 2'b00; // div
+                    3'b101: divctl <= 2'b01; // divu
+                    3'b110: divctl <= 2'b10; // rem
+                    3'b111: divctl <= 2'b11; // remu
+                    default: 
+                    begin
+                        mulctl <= 2'b00; // mul (reason: shorter critical path)
+                        divctl <= 2'b00; // div (reason: shorter critical path)
+                    end
+                endcase
             end
         endcase
     end
