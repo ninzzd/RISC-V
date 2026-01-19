@@ -1,6 +1,8 @@
 [submodule "src/datapath/ifu_src/div_src"]
 	path = src/datapath/ifu_src/div_src
 	url = https://github.com/Roh-13/Verilog-Divider.git
+    branch = main
 [submodule "src/datapath/ifu_src/mul_src"]
 	path = src/datapath/ifu_src/mul_src
 	url = https://github.com/ninzzd/mul32-dadda-verilog.git
+    branch = main
