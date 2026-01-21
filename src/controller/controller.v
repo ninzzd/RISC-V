@@ -3,8 +3,8 @@
     Description: Boiler-plate for the control_unit module
 */
 module controller #(
-    parameter pcmux_N = 2;
-    parameter ifuresctl_N = 2;
+    parameter pcmux_N = 2,
+    parameter ifuresctl_N = 2
 )(
     input clk,
     input [6:0] opcode,
@@ -41,7 +41,7 @@ module controller #(
 
     always @(posedge clk) // Main controller FSM 
     begin
-        case(state):
+        case(state)
             3'b000: // IF
             begin
                 instrre <= 1'b1;

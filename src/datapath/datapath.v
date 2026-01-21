@@ -1,6 +1,6 @@
 module datapath #(
-    parameter pcmux_N = 2;
-    parameter ifuresctl_N = 2;
+    parameter pcmux_N = 2,
+    parameter ifuresctl_N = 2
 ) (
     input clk,
     input [$clog2(pcmux_N)-1:0] pcmuxctl, // select/control signal for pcmux
@@ -11,7 +11,7 @@ module datapath #(
     input mulen, // enable signal for MU
     input [3:0] aluctl, // control signal for ALU
     input [1:0] mulctl, // control signal for MU 
-    input [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
+    input [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
 
     output [6:0] opcode,
     output [2:0] func3,
@@ -94,16 +94,17 @@ module datapath #(
     // -----------------------------------------------------------
     // QRU (Divider or Quotient and Reminder Unit)
         // must add rohan's divider module instance
-        div32 divunit (
-            .clk(clk),
-            .rst(1'b0), // no reset
-            .start(1'b0), // not used currently
-            .is_signed(1'b0), // unsigned division
-            .dividend_in(a),
-            .divisor_in(b),
-            .quotient(divres),
-            .remainder() // remainder not used currently
-        );
+        // div32 divunit (
+        //     .clk(clk),
+        //     .rst(1'b0), // no reset
+        //     .start(1'b0), // not used currently
+        //     .is_signed(1'b0), // unsigned division
+        //     .dividend_in(a),
+        //     .divisor_in(b),
+        //     .quotient(divres),
+        //     .remainder() // remainder not used currently
+        // );
+        // Some issue still persists, must debug later
     // -----------------------------------------------------------
 
     mux #(
@@ -118,7 +119,7 @@ module datapath #(
         .W(1),
         .N(2)
     ) exdonemux( // mux for EX stage done signal
-        .in({mudone,1'b1}), // ALU is combinational, so always done
+        .in({mudone,1'b1}), // ALU is combinational (for now, can be pipelined later if necessary)
         .sel(ifuresctl),
         .out(exdone)
     );

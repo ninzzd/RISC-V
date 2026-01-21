@@ -12,7 +12,7 @@ module regfile_int(
     input re,               // Read-enable (LOGIC HIGH)
 
     output reg [31:0] rd1,  // Read-data 1
-    output reg [31:0] rd2,  // Read-data 2
+    output reg [31:0] rd2   // Read-data 2
 );
     reg [31:0] x[0:31];     // 32-bit registers (x32)
     initial

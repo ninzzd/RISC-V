@@ -14,7 +14,7 @@ module data_mem #(parameter N = 1024)(
     always @(posedge clk)
     begin
         if(we)
-            rd <= mem[a];
+            rd <= mem[a]; // For now, assume single cycle read
         else
             mem[a] <= wd;
     end

@@ -1,7 +1,7 @@
 // Author: Ninaad Desai
 // Description: Describes the part of the controller that handles the execution (EX) stage control signals combinatorially
 module ex_controller #(
-    parameter ifuresctl_N = 2;
+    parameter ifuresctl_N = 2
 )(
     input [6:0] opcode,
     input [2:0] func3,
@@ -19,11 +19,11 @@ module ex_controller #(
 
     always @(*) // Deciding ctl sig for alu
     begin
-        case(opcode): // RV32IM
+        case(opcode) // RV32IM
             7'b0110011: // R-Type
             begin
-                case(func3):
-                    3'b000: aluctl <= {3'b000,func7b50[1]}// add, sub
+                case(func3)
+                    3'b000: aluctl <= {3'b000,func7b50[1]};// add, sub
                     3'b001: aluctl <= 4'b0101; // sll 
                     3'b010: aluctl <= 4'b1000; // slt
                     3'b011: aluctl <= 4'b1001; // sltu
@@ -39,10 +39,10 @@ module ex_controller #(
 
     always @(*) // Deciding ctl sig for mu/qru
     begin
-        case(opcode): // RV32IM
+        case(opcode) // RV32IM
             7'b0110011: // R-Type
             begin
-                case(func3):
+                case(func3)
                     3'b000: mulctl <= 2'b00; // mul
                     3'b001: mulctl <= 2'b01; // mulh
                     3'b010: mulctl <= 2'b10; // mulsu
@@ -63,7 +63,7 @@ module ex_controller #(
 
     always @(*) // Deciding ifuresctl
     begin
-        case(opcode): // RV32IM
+        case(opcode) // RV32IM
             7'b0110011: // R-Type
             begin
                 // case(func7b50):
@@ -73,6 +73,7 @@ module ex_controller #(
                 // endcase
                 ifuresctl <= ~func7b50[1]&func7b50[0]; // ALU output
             end
+            default: ifuresctl <= 0; // ALU output
         endcase
     end
 endmodule
