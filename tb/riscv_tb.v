@@ -26,6 +26,10 @@ module riscv_tb;
     );
 
     initial begin
+        $dumpfile("riscv_tb.vcd");
+        $dumpvars(0, riscv_tb);
+        $dumpvars(0, uut.dp.imem.instr);
+        $dumpvars(0, uut.dp.rfi.x);
         clk = 0;
         // Additional testbench initialization and stimulus can be added here
         #1000; // Run simulation for 1000ns
