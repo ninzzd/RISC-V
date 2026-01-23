@@ -13,3 +13,9 @@ log/
 
 # VS code configurations
 .vscode/
+
+# Assembly linker outputs, object files, binaries and hex outputs
+asm-test/*.o
+asm-test/*.elf
+asm-test/*.bin
+asm-test/*.hex
