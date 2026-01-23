@@ -13,7 +13,6 @@ module riscv #(parameter T = 0.000)(
 
     datapath dp (
         .clk(clk),
-        .instr(instr),
         .instrre(instrre),
         .pcnextctl(pcnextctl),
         .pcmuxctl(pcmuxctl),

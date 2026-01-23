@@ -8,7 +8,7 @@ module data_mem #(parameter N = 1024)(
     input [31:0] wd,    // Write-data
     input we,           // Write-enable
 
-    output [31:0] rd    // Read-data
+    output reg [31:0] rd    // Read-data
 );
     reg [31:0] mem [0:N-1]; // Memory block (Cache)
     always @(posedge clk)

@@ -1,6 +1,7 @@
  /*
     Author: Ninaad Desai
     Description: Simple, behavioral implementation of the register file (inferred BRAM). Two read lines, one write line
+    TODO: Structural implementation
  */
 module regfile_int(
     input clk,
@@ -17,7 +18,11 @@ module regfile_int(
     reg [31:0] x[0:31];     // 32-bit registers (x32)
     initial
     begin
-        x[0] <= 32'd0;  // x0 is zero 
+        x[0] <= 32'd0;  // x0 is zero
+
+        // For testing purposes
+        x[1] <= 32'd5;
+        x[2] <= 32'd10;
     end
     // Write
     always @(posedge clk)

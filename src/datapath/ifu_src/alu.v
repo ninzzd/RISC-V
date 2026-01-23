@@ -25,6 +25,8 @@ module alu #(
     wire [31:0] add_result;
     wire [31:0] sl_result;
     wire [31:0] sr_result;
+    wire [31:0] slt_result;
+    wire [31:0] sltu_result;
     wire sr_mode;
     // wire [31:0] mul_lo;
     // wire [31:0] mul_hi;

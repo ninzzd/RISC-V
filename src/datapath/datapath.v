@@ -8,7 +8,7 @@ module datapath #(
     input instrre, // control signal to fetch new instruction (instruction read enable)
     input regwe, // register write-enable
     input regre, // register read-enable
-    input mulen, // enable signal for MU
+    input mulstart, // enable signal for MU
     input [3:0] aluctl, // control signal for ALU
     input [1:0] mulctl, // control signal for MU 
     input [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
@@ -39,7 +39,9 @@ module datapath #(
 
     // -----------------------------------------------------------
     // Stage 1: Instruction Fetch (IF)
-    instr_mem imem ( // simple instruction memory with clocked LUT
+    instr_mem #(
+        .N(2**10)
+    ) imem ( // simple instruction memory with clocked LUT
         .a(pc),
         .rd(instr),
         .re(instrre),
@@ -82,7 +84,7 @@ module datapath #(
     // MU (Multiply Unit)
     mu MU(
         .clk(clk),
-        .en(mulen),
+        .start(mulstart),
         .a(a),
         .b(b),
         .mulctl(mulctl),

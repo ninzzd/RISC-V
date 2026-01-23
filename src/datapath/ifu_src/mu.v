@@ -1,6 +1,6 @@
 module mu(
     input clk,
-    input en,
+    input start,
     input [31:0] a,
     input [31:0] b,
     input [1:0] mulctl,
@@ -12,10 +12,6 @@ module mu(
     // 01 - mulh
     // 10 - mulsu
     // 11 - mulhu
-    reg [31:0] a_;
-    reg [31:0] b_;
-    reg [1:0] mulctl_;
-    reg desired_op;
 
     wire [31:0] lo;
     wire [31:0] hi;
@@ -23,21 +19,9 @@ module mu(
     wire mulresctl; // 0 - lo, 1 - hi
     wire mulresctl_buffered;
 
-    // To buffer inputs to determine validity
-    always @(posedge clk)
-    begin
-        if(en) 
-        begin
-            a_ <= a;
-            b_ <= b;
-            mulctl_ <= mulctl;
-        end
-        desired_op <= en;
-    end
-    // LUT for multiplier mode (sign interpretation)
     always @(*)
     begin
-        case(mulctl_)
+        case(mulctl)
             2'b00: mode <= 2'b01; // signed, lo
             2'b01: mode <= 2'b01; // signed, hi
             2'b10: mode <= 2'b10; // signed a unsigned b, hi
@@ -46,24 +30,26 @@ module mu(
     end
 
     // mulresmux sel/ctl line
-    assign mulresctl = mulctl_[1] | mulctl_[0];
+    assign mulresctl = mulctl[1] | mulctl[0];
 
     buffer #(
-        .W(2),
+        .W(1),
         .L(8) // multiplier latency
     ) mulresctl_buff(
         .clk(clk),
-        .in({desired_op,mulresctl}),
-        .out({done,mulresctl_buffered})
+        .in({mulresctl}),
+        .out({mulresctl_buffered})
     );
 
     mul32p mul(
         .clk(clk),
-        .a(a_),
-        .b(b_),
+        .start(start),
+        .a(a),
+        .b(b),
         .mode(mode),
         .hi(hi),
-        .lo(lo)
+        .lo(lo),
+        .done(done)
     );
 
     mux #(

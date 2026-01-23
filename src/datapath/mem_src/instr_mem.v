@@ -5,20 +5,20 @@
 module instr_mem #(parameter N = 1024)(
     input re, //  Read enable
     input clk,
-    input [$clog2(N)-1:0] a,
-    output [31:0] rd
+    input [31:0] a,
+    output reg [31:0] rd
 );
     reg [31:0] instr [0:N-1];
     
     // Initial memory loading (for simulation purposes)
-    // initial
-    // begin
-    //     $readmemh("instr_mem.mem", instr);
-    // end
+    initial
+    begin
+        $readmemh("asm-test/ex1.hex", instr);
+    end
 
     always @(posedge clk)
     begin
         if (re)
-            rd <= instr[a];
+            rd <= instr[a[$clog2(N)-1:0]];
     end
 endmodule
