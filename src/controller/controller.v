@@ -16,12 +16,13 @@ module controller #(
     output reg pcnextctl, // control signal for updating pc
     output reg instrre, // instruction read enable
     output reg regwe, // register write-enable
-    output reg [3:0] aluctl, // control signal for ALU
-    output reg [1:0] mulctl, // control signal for MU 
-    output reg [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
+    output reg regre, // register read-enable
+    output [3:0] aluctl, // control signal for ALU
+    output mulstart, // enable signal for MU
+    output [1:0] mulctl, // control signal for MU 
+    output [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
 );  
     reg [2:0] state;
-    wire exvalid;
     initial begin
         state <= 3'b000;
     end
@@ -29,14 +30,13 @@ module controller #(
     ex_controller #(
             .ifuresctl_N(ifuresctl_N)
     ) exc (
-            .clk(clk),
             .opcode(opcode),
             .func3(func3),
             .func7b50(func7b50),
             .aluctl(aluctl),
             .mulctl(mulctl),
             .ifuresctl(ifuresctl),
-            .valid(exvalid)
+            .mulstart(mulstart)
     ); // control signals for the EX stage are ready in the first clock cycle itself
 
     always @(posedge clk) // Main controller FSM 
@@ -54,7 +54,7 @@ module controller #(
             end
             3'b010: // EX
             begin
-                if(exvalid)
+                if(exdone)
                 begin
                     state <= 3'b011;
                 end

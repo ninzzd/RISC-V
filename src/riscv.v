@@ -3,6 +3,10 @@ module riscv #(parameter T = 0.000)(
 );
     wire exdone;
     wire instrre;
+    wire mulstart;
+    wire [6:0] opcode;
+    wire [2:0] func3;
+    wire [1:0] func7b50;
     wire pcnextctl;
     wire [$clog2(2)-1:0] pcmuxctl;
     wire regwe;
@@ -13,28 +17,34 @@ module riscv #(parameter T = 0.000)(
 
     datapath dp (
         .clk(clk),
-        .instrre(instrre),
-        .pcnextctl(pcnextctl),
         .pcmuxctl(pcmuxctl),
+        .pcnextctl(pcnextctl),
+        .instrre(instrre),
         .regwe(regwe),
         .regre(regre),
         .aluctl(aluctl),
+        .mulstart(mulstart),
         .mulctl(mulctl),
         .ifuresctl(ifuresctl),
+        .opcode(opcode),
+        .func3(func3),
+        .func7b50(func7b50),
         .exdone(exdone)
     );
 
     controller ctrl (
         .clk(clk),
-        .opcode(instr[6:0]),
-        .func3(instr[14:12]),
-        .func7b50({instr[30],instr[25]}),
+        .opcode(opcode),
+        .func3(func3),
+        .func7b50(func7b50),
         .exdone(exdone),
         .pcmuxctl(pcmuxctl),
         .pcnextctl(pcnextctl),
         .instrre(instrre),
         .regwe(regwe),
+        .regre(regre),
         .aluctl(aluctl),
+        .mulstart(mulstart),
         .mulctl(mulctl),
         .ifuresctl(ifuresctl)
     );

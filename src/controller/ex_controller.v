@@ -7,9 +7,9 @@ module ex_controller #(
     input [2:0] func3,
     input [1:0] func7b50,
     // input alu_done, // Not required, ALU is combinatorial and not internally pipelined
-    input mul_done,
     output reg [3:0] aluctl,
     output reg [1:0] mulctl,
+    output reg mulstart,
     output reg [$clog2(ifuresctl_N)-1:0] ifuresctl // control signal for ifuresmux
 );
 
@@ -42,6 +42,7 @@ module ex_controller #(
         case(opcode) // RV32IM
             7'b0110011: // R-Type
             begin
+                mulstart <= ~func7b50[1]&func7b50[0]&~func3[2]; // start MU when func7 = 0x01
                 case(func3)
                     3'b000: mulctl <= 2'b00; // mul
                     3'b001: mulctl <= 2'b01; // mulh
@@ -66,12 +67,12 @@ module ex_controller #(
         case(opcode) // RV32IM
             7'b0110011: // R-Type
             begin
-                // case(func7b50):
-                //     2'b00: ifuresctl = 0; // ALU output
-                //     2'b01: ifuresctl = 1; // MU output
-                //     default: ifuresctl = 0; // ALU output
-                // endcase
-                ifuresctl <= ~func7b50[1]&func7b50[0]; // ALU output
+                case(func7b50)
+                    2'b00: ifuresctl <= 0; // ALU output
+                    2'b01: ifuresctl <= 1; // MU output
+                    default: ifuresctl <= 0; // ALU output
+                endcase
+                // ifuresctl <= ~func7b50[1]&func7b50[0]; // ALU output
             end
             default: ifuresctl <= 0; // ALU output
         endcase

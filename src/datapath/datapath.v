@@ -8,8 +8,8 @@ module datapath #(
     input instrre, // control signal to fetch new instruction (instruction read enable)
     input regwe, // register write-enable
     input regre, // register read-enable
-    input mulstart, // enable signal for MU
     input [3:0] aluctl, // control signal for ALU
+    input mulstart, // enable signal for MU
     input [1:0] mulctl, // control signal for MU 
     input [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
 
