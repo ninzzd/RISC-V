@@ -5,8 +5,11 @@ This project aims to develop a microarchitecture for the RISC-V RV32I ISA and so
 
 ## Progress
 - Multiplication and division units: completed
+- Datapath for RV32IM: completed
+- Testing: compiling correctly, errors in simulation
 - Floating-Point Unit: in progress
 - Vector processor implementation and cryptography cores: needs work
   
 ## TODO
-- Test R-Type instructions for RV32IM
+- Debug RV32IM datapath and controller
+- Convernt multicycle design to pipelined
