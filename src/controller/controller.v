@@ -44,18 +44,22 @@ module controller #(
         case(state)
             3'b000: // IF
             begin
+                regwe <= 1'b0;
                 instrre <= 1'b1;
                 state <= 3'b001;
             end
             3'b001: // ID
             begin
                 regre <= 1'b1;
-                state <= 3'b010;
+                state <= 3'b010; // should be made such that it stalls when the instruction is not valid (garbage)
                 pcnextctl <= 1'b1;
-                pcmuxctl <= 0; // pcadd4 by default
+                pcmuxctl <= 0;
             end
             3'b010: // EX
             begin
+                pcnextctl <= 1'b0;
+                instrre <= 1'b0;
+                regre <= 1'b0;
                 if(exdone)
                 begin
                     state <= 3'b011;

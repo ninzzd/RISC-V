@@ -34,7 +34,7 @@ module riscv_tb;
             $dumpvars(0, uut.dp.rfi.x[i]);
         end
         for (j = 0; j < 10; j = j + 1) begin // dump instruction memory (will need only the first one for this test)
-            $dumpvars(0, uut.dp.imem.instr[j]);
+            $dumpvars(0, uut.dp.imem.mem[j]);
         end
         clk = 0;
         // Additional testbench initialization and stimulus can be added here
