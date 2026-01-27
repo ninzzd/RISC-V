@@ -51,6 +51,8 @@ module controller #(
             begin
                 regre <= 1'b1;
                 state <= 3'b010;
+                pcnextctl <= 1'b1;
+                pcmuxctl <= 0; // pcadd4 by default
             end
             3'b010: // EX
             begin

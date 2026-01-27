@@ -2,18 +2,22 @@
     Author: Ninaad Desai
     Description: Simple, behavioral implementation of the L1 Instruction ROM (direct LUT)
  */
-module instr_mem #(parameter N = 1024)(
+module instr_mem #(parameter N = 1024)( // N : Total number of instructions
     input re, //  Read enable
     input clk,
     input [31:0] a,
     output reg [31:0] rd
 );
-    reg [31:0] instr [0:N-1];
+    reg [7:0] instr [0:N-1]; // Memory is always byte-addressable
+    integer i;
     
     // Initial memory loading (for simulation purposes)
     initial
     begin
-        $readmemh("asm-test/ex1.hex", instr);
+        // $readmemh("asm-test/ex1.hex", instr); // Does not work for byte addressing, works for 32-bit addresses
+        for(i = 0;i < 4*N; i = i + 1) // Initialize all memory to 0
+        begin
+        end
     end
 
     always @(posedge clk)
