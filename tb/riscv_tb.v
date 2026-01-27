@@ -18,6 +18,8 @@
 module riscv_tb;
     // Testbench code for RISC-V processor would go here
     reg clk;
+    integer i;
+    integer j;
     
     always #5 clk = ~clk; // 10ns clock period
 
@@ -28,8 +30,12 @@ module riscv_tb;
     initial begin
         $dumpfile("riscv_tb.vcd");
         $dumpvars(0, riscv_tb);
-        $dumpvars(0, uut.dp.imem.instr);
-        $dumpvars(0, uut.dp.rfi.x);
+        for (i = 0; i < 32; i = i + 1) begin // dump all registers
+            $dumpvars(0, uut.dp.rfi.x[i]);
+        end
+        for (j = 0; j < 10; j = j + 1) begin // dump instruction memory (will need only the first one for this test)
+            $dumpvars(0, uut.dp.imem.instr[j]);
+        end
         clk = 0;
         // Additional testbench initialization and stimulus can be added here
         #1000; // Run simulation for 1000ns

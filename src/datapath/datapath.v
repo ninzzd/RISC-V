@@ -20,7 +20,11 @@ module datapath #(
 );
     // -----------------------------------------------------------
     // Regs
-    reg [31:0] pc;
+    reg [31:0] pc; // must be intiliazed for testing (to 0x00000000)
+    initial begin
+        pc <= 32'd0;
+    end
+    // -----------------------------------------------------------
 
     // Wires
     wire [31:0] pcadd4;
