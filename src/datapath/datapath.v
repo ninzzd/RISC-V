@@ -8,6 +8,7 @@ module datapath #(
     input instrre, // control signal to fetch new instruction (instruction read enable)
     input regwe, // register write-enable
     input regre, // register read-enable
+    input bmuxctl, // control signal for B input mux to ALU
     input [3:0] aluctl, // control signal for ALU
     input mulstart, // enable signal for MU
     input [1:0] mulctl, // control signal for MU 
@@ -32,6 +33,8 @@ module datapath #(
     wire [31:0] instr;
     wire [31:0] a;
     wire [31:0] b;
+    wire [31:0] breg;
+    wire [31:0] bimm;
     wire [31:0] regwrite;
     wire [31:0] alures;
     wire aluzero;
@@ -64,11 +67,23 @@ module datapath #(
         .ra1(instr[19:15]), // rs1
         .ra2(instr[24:20]), // rs2
         .rd1(a), // value at rs1
-        .rd2(b), // value at rs2
+        .rd2(breg), // value at rs2
         .wa1(instr[11:7]), // rd
         .wd1(regwrite), // Stage 5: Write Back (WB)
         .we(regwe),
         .re(regre)
+    );
+    sign_ext se (
+        .in(instr[31:20]), // I-type immediate
+        .out(bimm) // not used for R-type instructions
+    );
+    mux #(
+        .W(32),
+        .N(2)
+    ) bmux( // mux for selecting between register value and immediate for B input to ALU
+        .in({bimm,breg}), // 0 => register value, 1 => immediate
+        .sel(bmuxctl),
+        .out(b)
     );
     // -----------------------------------------------------------
 
@@ -90,7 +105,7 @@ module datapath #(
         .clk(clk),
         .start(mulstart),
         .a(a),
-        .b(b),
+        .b(breg), // path through MU is active for R-type instructions only
         .mulctl(mulctl),
         .mulres(mulres),
         .done(mudone)
