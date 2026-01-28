@@ -86,7 +86,7 @@ module datapath #(
         Even with bmuxctl = 0, b = X.0 + bimm.1 = X (not bimm)
         X is not treated as garbage values
     */
-        .in({(breg === 32'dX ? 32'd0 : breg),bimm}), // ternary condition is only for simulation, to handle X values
+        .in({(breg === 32'dx ? 32'd0 : breg),bimm}), // ternary condition is only for simulation, to handle X values
         .sel(bmuxctl), // 1 => register value, 0 => immediate (justification for this choice: directly equals opcode[5])
         .out(b)
     );
