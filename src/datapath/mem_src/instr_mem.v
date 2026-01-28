@@ -17,7 +17,7 @@ module instr_mem #(parameter N = 1024)( // N : Total number of instructions
     // Initial memory loading (for simulation purposes)
     initial
     begin
-        file = $fopen("asm-test/ex1.hex", "r"); // stores instructions in little endian format
+        file = $fopen("asm-test/exRI.hex", "r"); // stores instructions in little endian format
         addr = 0;
         // $readmemh("asm-test/ex1.hex", instr); // Does not work for byte addressing, works for 32-bit addresses
         while (!$feof(file))

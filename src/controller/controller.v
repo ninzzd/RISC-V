@@ -17,6 +17,7 @@ module controller #(
     output reg instrre, // instruction read enable
     output reg regwe, // register write-enable
     output reg regre, // register read-enable
+    output reg bmuxctl,
     output [3:0] aluctl, // control signal for ALU
     output mulstart, // enable signal for MU
     output [1:0] mulctl, // control signal for MU 
@@ -51,6 +52,15 @@ module controller #(
             3'b001: // ID
             begin
                 regre <= 1'b1;
+                casez(opcode)
+                    7'b0?10011: // Issue with casez
+                    begin
+                        bmuxctl <= opcode[5];
+                        // $write("test\n");
+                    end
+                    default:
+                        bmuxctl <= 1'b1; // default to breg
+                endcase
                 state <= 3'b010; // should be made such that it stalls when the instruction is not valid (garbage)
                 pcnextctl <= 1'b1;
                 pcmuxctl <= 0;

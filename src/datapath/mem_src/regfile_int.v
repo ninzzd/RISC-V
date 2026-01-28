@@ -21,8 +21,8 @@ module regfile_int(
         x[0] <= 32'd0;  // x0 is zero
 
         // For testing purposes
-        x[1] <= 32'd5;
-        x[2] <= 32'd10;
+        x[1] <= 32'd2;
+        x[2] <= 32'd3;
     end
     // Write
     always @(posedge clk)

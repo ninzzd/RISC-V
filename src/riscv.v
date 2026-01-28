@@ -11,6 +11,7 @@ module riscv #(parameter T = 0.000)(
     wire [$clog2(2)-1:0] pcmuxctl;
     wire regwe;
     wire regre;
+    wire bmuxctl;
     wire [3:0] aluctl;
     wire [1:0] mulctl;
     wire [$clog2(2)-1:0] ifuresctl;
@@ -22,6 +23,7 @@ module riscv #(parameter T = 0.000)(
         .instrre(instrre),
         .regwe(regwe),
         .regre(regre),
+        .bmuxctl(bmuxctl),
         .aluctl(aluctl),
         .mulstart(mulstart),
         .mulctl(mulctl),
@@ -43,6 +45,7 @@ module riscv #(parameter T = 0.000)(
         .instrre(instrre),
         .regwe(regwe),
         .regre(regre),
+        .bmuxctl(bmuxctl),
         .aluctl(aluctl),
         .mulstart(mulstart),
         .mulctl(mulctl),

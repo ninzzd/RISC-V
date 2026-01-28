@@ -19,8 +19,8 @@ module ex_controller #(
 
     always @(*) // Deciding ctl sig for alu
     begin
-        case(opcode) // RV32IM
-            7'b0110011: // R-Type
+        casez(opcode) // RV32IM
+            7'b0?10011: // R- and I-Type ALU operations
             begin
                 case(func3)
                     3'b000: aluctl <= {3'b000,func7b50[1]};// add, sub
@@ -64,10 +64,10 @@ module ex_controller #(
 
     always @(*) // Deciding ifuresctl
     begin
-        case(opcode) // RV32IM
-            7'b0110011: // R-Type
+        casez(opcode) // RV32IM
+            7'b0?10011: // R- and I-Type 
             begin
-                case(func7b50)
+                case(func7b50) // Be careful about this for I-type
                     2'b00: ifuresctl <= 0; // ALU output
                     2'b01: ifuresctl <= 1; // MU output
                     default: ifuresctl <= 0; // ALU output

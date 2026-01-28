@@ -81,8 +81,13 @@ module datapath #(
         .W(32),
         .N(2)
     ) bmux( // mux for selecting between register value and immediate for B input to ALU
-        .in({bimm,breg}), // 0 => register value, 1 => immediate
-        .sel(bmuxctl),
+    /* 
+        Note: In case of I-type, instr[24:20] may not correspond to any valid address, causing breg to be X
+        Even with bmuxctl = 0, b = X.0 + bimm.1 = X (not bimm)
+        X is not treated as garbage values
+    */
+        .in({(breg === 32'dX ? 32'd0 : breg),bimm}), // ternary condition is only for simulation, to handle X values
+        .sel(bmuxctl), // 1 => register value, 0 => immediate (justification for this choice: directly equals opcode[5])
         .out(b)
     );
     // -----------------------------------------------------------
