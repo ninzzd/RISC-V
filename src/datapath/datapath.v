@@ -13,6 +13,9 @@ module datapath #(
     input mulstart, // enable signal for MU
     input [1:0] mulctl, // control signal for MU 
     input [$clog2(ifuresctl_N)-1:0] ifuresctl, // control signal for ifuresmux
+    input dmemwe, // data memory write enable
+    input [2:0] dmctl, // control signal for data memory
+    input regwctl, // control signal for regwmux
 
     output [6:0] opcode,
     output [2:0] func3,
@@ -35,13 +38,16 @@ module datapath #(
     wire [31:0] b;
     wire [31:0] breg;
     wire [31:0] bimm;
-    wire [31:0] regwrite;
+    wire [31:0] regw;
     wire [31:0] alures;
     wire aluzero;
     wire [31:0] mulres;
     wire [31:0] divres;
     wire mudone;
     wire qrudone;
+    wire [31:0] dmres;
+    wire [31:0] ifures;
+    wire [11:0] store_imm;
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
@@ -57,6 +63,7 @@ module datapath #(
     assign opcode = instr[6:0];
     assign func3 = instr[14:12];
     assign func7b50 = {instr[30],instr[25]};
+    assign store_imm = {instr[31:25], instr[11:7]}; // for S-type store instructions, not used for now
     // -----------------------------------------------------------
 
     // -----------------------------------------------------------
@@ -69,11 +76,11 @@ module datapath #(
         .rd1(a), // value at rs1
         .rd2(breg), // value at rs2
         .wa1(instr[11:7]), // rd
-        .wd1(regwrite), // Stage 5: Write Back (WB)
+        .wd1(regw), // Stage 5: Write Back (WB)
         .we(regwe),
         .re(regre)
     );
-    sign_ext se (
+    sign_ext se ( // input must be multiplexed later (I-type vs S-type)
         .in(instr[31:20]), // I-type immediate
         .out(bimm) // not used for R-type instructions
     );
@@ -132,6 +139,14 @@ module datapath #(
         // );
         // Some issue still persists, must debug later
     // -----------------------------------------------------------
+    data_mem dmem(
+        .clk(clk),
+        .a(alures),
+        .wd(breg),
+        .we(dmemwe),
+        .ctl(dmctl),
+        .rd(dmres)
+    );
 
     mux #(
         .W(32),
@@ -139,7 +154,7 @@ module datapath #(
     ) ifuresmux( // mux for integer functional unit (IFU = ALU + MU + QRU)
         .in({mulres,alures}),
         .sel(ifuresctl), // 0 => ALU, 1 => MU
-        .out(regwrite)
+        .out(ifures)
     );
     mux #(
         .W(1),
@@ -150,6 +165,15 @@ module datapath #(
         .out(exdone)
     );
     
+    mux #(
+        .W(32),
+        .N(2)
+    ) regwmux( // mux for WB stage (input from MEM or EX)
+        .in({dmres,ifures}), 
+        .sel(regwctl),
+        .out(regw)
+    );
+
     // -----------------------------------------------------------
     // Stage 5: Write Back (WB)
     // logic for pcnext

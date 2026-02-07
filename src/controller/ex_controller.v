@@ -34,6 +34,8 @@ module ex_controller #(
                     default: aluctl <= 4'b0100; // and (reason: shorter critical path)
                 endcase
             end
+            default:
+                aluctl <= 4'b0000;
         endcase
     end
 
@@ -54,11 +56,14 @@ module ex_controller #(
                     // 3'b111: divctl <= 2'b11; // remu
                     default: 
                     begin
-                        // mulctl <= 2'b00; // mul (reason: shorter critical path)
+                        mulctl <= 2'b00; // mul (reason: shorter critical path)
                         // divctl <= 2'b00; // div (reason: shorter critical path)
                     end
                 endcase
             end
+            default:
+                mulstart <= 1'b0;
+                mulctl <= 2'b00;
         endcase
     end
 
@@ -75,6 +80,7 @@ module ex_controller #(
                 // ifuresctl <= ~func7b50[1]&func7b50[0]; // ALU output
             end
             default: ifuresctl <= 0; // ALU output
+            // Note: default statements required everywhere to avoid latching
         endcase
     end
 endmodule
